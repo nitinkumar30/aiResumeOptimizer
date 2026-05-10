@@ -327,6 +327,7 @@ This workflow is free to use, modify, and share. If you build something cool wit
 ## 👤 Author
 
 **Nitin Kumar**
-🔗 [linkedin.com/in/nitinkumar](https://www.linkedin.com/in/nitinkumar)
+🔗 [LinkedIn](https://www.linkedin.com/in/nitinkumar)
+
 
 > Built with ☕, too many LaTeX error logs, and the firm belief that your resume should work as hard as you do.
