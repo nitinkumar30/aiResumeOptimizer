@@ -1,0 +1,741 @@
+{
+  "name": "OptimizeResumeAsPerJD — Enhanced",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Generate JD synced Resume",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Resume",
+              "fieldType": "file",
+              "acceptFileTypes": ".pdf, .docx",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Job Description 📋",
+              "fieldType": "textarea",
+              "placeholder": "Input full Job Description here",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "buttonLabel": "Send ✅",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Your response has been recorded successfully."
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -800,
+        148
+      ],
+      "id": "de512db8-fc72-4c11-b898-dbeb71ed4988",
+      "name": "Resume & JD submitted",
+      "webhookId": "c14ca530-db15-493d-a9f8-dda8afdac38a"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-lite-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -344,
+        372
+      ],
+      "id": "4a6e1047-f719-4540-a782-1b058a765ec8",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7BlIJ4WsT7tfELQL",
+          "name": "Google Gemini(PaLM) resumeCustom_1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-lite-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        8,
+        372
+      ],
+      "id": "357af32b-4f53-4597-91b5-ab11a5caf8e2",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "w2p3633yF66TV5TQ",
+          "name": "Google Gemini(PaLM) customResume_2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-lite-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        584,
+        372
+      ],
+      "id": "c127dde7-5742-4b06-a62f-abe2ed2ddb1b",
+      "name": "Google Gemini Chat Model4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wZStfV8eX8FmFvBm",
+          "name": "Google Gemini(PaLM) customResume_3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Role: High-Precision Document Intelligence Engine.\n**Task:** Locate the uploaded document in the current context, parse its full content, and convert it into a detailed JSON object. You must ignore all internal training data and common placeholders (e.g., \"Nitin Singh\") to prevent hallucination.\n\n---\n\n### **🧠 EXTRACTION LOGIC (Layout Agnostic)**\n1.  **Multi-Role Consolidation:** If the candidate lists a single employer with multiple sequential roles (e.g., Programmer → Assistant System Engineer → System Engineer), you MUST create a distinct entry for every role to preserve the career progression.\n2.  **Project-to-Employer Mapping:** Identify specific \"Projects\" and logically nest them within the corresponding work experience entry based on date alignment and descriptive context[cite: 3].\n3.  **Fragment Reassembly:** For documents with two-column layouts, logically reconnect floating dates, locations, or bullet points to their nearest relevant header based on visual proximity in the text stream.\n4.  **Date Standardization:** Convert all shorthand months and years (e.g., \"Sept '21\") into full \"Month YYYY\" format (e.g., \"September 2021\")[cite: 5].\n\n---\n\n### **🚨 DATA INTEGRITY RULES**\n*   **Direct Content Access:** You are receiving a file. Read the actual binary/text content of the attachment. Do not rely on the filename for data.\n*   **No Hallucination:** Use ONLY the exact strings found in the text. Do not invent details or use generic placeholders.\n*   **Dynamic Skill Matrix:** Group technical keywords into categories such as \"Automation,\" \"Programming,\" \"API Testing,\" and \"AI/ML Tools\".\n*   **Null Safety:** If a specific field is not present in the text, return an empty array `[]` or `null`.\n\n---\n\n### **📌 OUTPUT JSON SCHEMA**\n```json\n{\n  \"candidate_identity\": {\n    \"full_name\": \"\",\n    \"contact\": { \"email\": \"\", \"phone\": \"\", \"location\": \"\" },\n    \"online_presence\": { \"linkedin\": \"\", \"github\": \"\", \"portfolio\": \"\", \"blog\": \"\" }\n  },\n  \"professional_summary\": \"\",\n  \"technical_skill_matrix\": {\n    \"automation_testing\": [],\n    \"programming_languages\": [],\n    \"api_and_databases\": [],\n    \"cloud_and_devops\": [],\n    \"ai_generative_tools\": [],\n    \"soft_skills\": []\n  },\n  \"detailed_work_history\": [\n    {\n      \"company_name\": \"\",\n      \"job_title\": \"\",\n      \"location\": \"\",\n      \"employment_period\": \"\",\n      \"responsibilities\": [],\n      \"associated_projects\": [\n        { \"project_name\": \"\", \"tech_stack\": [], \"details\": \"\" }\n      ]\n    }\n  ],\n  \"academic_background\": [\n    {\n      \"institution\": \"\",\n      \"degree_attained\": \"\",\n      \"field_of_study\": \"\",\n      \"dates\": \"\",\n      \"location\": \"\",\n      \"grade\": \"\"\n    }\n  ],\n  \"technical_artifacts\": {\n    \"certifications\": [],\n    \"published_packages_or_blogs\": [],\n    \"achievements_and_awards\": [],\n    \"extracurricular_activities\": []\n  },\n  \"metadata_for_analysis\": {\n    \"inferred_total_years_experience\": \"\",\n    \"primary_technical_focus\": \"\",\n    \"data_completeness_score\": 0\n  }\n}\n```\n\n**CRITICAL INSTRUCTION:** Process the attached document now. Analyze every key:value pair present in the text and return ONLY the JSON object.\n\nINPUT TEXT:\n{{ $input.item.json.text }}",
+        "needsFallback": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -352,
+        148
+      ],
+      "id": "0a9d8857-e15b-4321-9679-21c513b455e0",
+      "name": "Resume extractor",
+      "retryOnFail": true,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a STRICT Talent Intelligence System, ATS Parsing Engine, and Job Description Structuring Model.\n\nYour ONLY task is to extract structured intelligence from the provided Job Description.\n\nINPUT:\n{{ $('Resume & JD submitted').item.json['Job Description 📋'] }}\n\n---\n\n# 🚨 ABSOLUTE NON-NEGOTIABLE RULES\n\nYou MUST follow all rules below without exception:\n\n- DO NOT hallucinate or infer missing information\n- DO NOT add external knowledge or industry assumptions\n- DO NOT assume responsibilities, tools, or skills not explicitly present\n- DO NOT bias toward any domain (tech or non-tech)\n- DO NOT merge unrelated concepts\n- DO NOT paraphrase beyond normalization rules\n- If data is missing → return \"\" or []\n\nThis is a DETECT-ONLY system, not a GENERATION system.\n\n---\n\n# 🧠 STEP 1 — TEXT UNDERSTANDING (NO INFERENCE)\n\nRead the JD and ONLY identify explicitly mentioned:\n\n- Skills\n- Tools\n- Responsibilities\n- Requirements\n- Experience\n- Role expectations\n\nIgnore all implied meanings unless directly stated.\n\n---\n\n# 🧠 STEP 2 — DOMAIN CLASSIFICATION (STRICT)\n\nClassify into ONLY ONE primary domain:\n\nAllowed domains:\n- Software Engineering / IT\n- Data / AI / Analytics\n- DevOps / Cloud\n- QA / Testing\n- Product / Project Management\n- Marketing / Digital Marketing\n- Sales / Business Development\n- Human Resources / Recruitment\n- Finance / Accounting\n- Operations / Supply Chain\n- Customer Support\n- Healthcare / Medical\n- Education / Training\n- Hybrid (ONLY if multiple domains are equally explicit)\n\n⚠️ If uncertain → choose \"Hybrid\" ONLY\n\n---\n\n# 🧠 STEP 3 — ROLE INTENT EXTRACTION\n\nExtract ONLY explicitly stated information:\n\n- Job purpose (from JD text only)\n- Core responsibilities theme\n- Seniority level (Junior / Mid / Senior / Lead / Executive)\n- Industry context if mentioned\n\nDo NOT guess level based on experience unless explicitly stated.\n\n---\n\n# 🧠 STEP 4 — SKILL EXTRACTION (STRICT MODE)\n\nExtract skills EXACTLY as written or clearly stated.\n\n## Technical Skills (ONLY if present)\n- Programming languages\n- Frameworks\n- Platforms\n- Engineering tools\n- APIs\n- Systems\n\n## Non-Technical Skills (ALWAYS extract if present)\n- Communication\n- Leadership\n- Sales ability\n- Negotiation\n- Analytical thinking\n- Stakeholder management\n- Customer handling\n- Coordination\n\n⚠️ If a skill is not explicitly present → DO NOT include it\n\n---\n\n# 🧠 STEP 5 — TOOLS & PLATFORMS\n\nExtract all tools mentioned explicitly:\n\nExamples:\n- CRM systems\n- ATS tools\n- ERP systems\n- Analytics tools\n- Development tools\n- Marketing tools\n- Finance tools\n- HR systems\n\nDo NOT categorize unless explicitly identifiable.\n\n---\n\n# 🧠 STEP 6 — RESPONSIBILITY STRUCTURE (STRICT GROUPING)\n\nONLY use JD wording to group:\n\n- Core Responsibilities → primary job duties explicitly stated\n- Secondary Responsibilities → supporting duties explicitly stated\n- Operational Tasks → execution-level tasks explicitly stated\n- Strategic Tasks → planning/leadership tasks explicitly stated\n\n⚠️ Do NOT reassign meaning\n\n---\n\n# 🧠 STEP 7 — EXPERIENCE REQUIREMENTS\n\nExtract ONLY if explicitly written:\n\n- Years of experience required\n- Seniority level expectation\n- Domain-specific experience requirement\n\nIf not mentioned → return \"\"\n\n---\n\n# 🧠 STEP 8 — KEYWORD IMPORTANCE MODEL (RULE-BASED ONLY)\n\nClassify keywords strictly using JD language:\n\n## HIGH PRIORITY\n- “Must”, “Required”, “Mandatory”\n- Repeated terms (2+ times)\n- Core job responsibilities\n\n## MEDIUM PRIORITY\n- “Preferred”, “Desired”, “Good to have”\n\n## LOW PRIORITY\n- Optional mentions\n- Secondary tools/skills\n\n⚠️ Do NOT rank based on assumptions or market knowledge\n\n---\n\n# 🧠 STEP 9 — RESUME OPTIMIZATION INSIGHTS (STRICT OUTPUT ONLY)\n\nGenerate ONLY based on missing explicit JD elements:\n\n- Missing skills (ONLY if clearly required in JD but not in extracted list)\n- Skills to add (must be naturally usable, not keyword stuffing)\n- Suggested placement:\n  - Skills section\n  - Experience section\n  - Projects section\n  - Certifications section\n\n⚠️ Do NOT suggest unrelated skills\n\n---\n\n# 📊 FINAL OUTPUT FORMAT (STRICT JSON ONLY)\n\nReturn ONLY this JSON structure:\n\n{\n  \"domain_analysis\": {\n    \"detected_domain\": \"\",\n    \"industry\": \"\",\n    \"job_type\": \"\",\n    \"seniority_level\": \"\"\n  },\n\n  \"role_intent\": {\n    \"summary\": \"\",\n    \"core_focus\": []\n  },\n\n  \"must_have_skills\": [],\n  \"good_to_have_skills\": [],\n\n  \"skills\": {\n    \"technical_skills\": [],\n    \"non_technical_skills\": [],\n    \"tools_platforms\": []\n  },\n\n  \"responsibilities\": {\n    \"core\": [],\n    \"secondary\": [],\n    \"strategic\": [],\n    \"operational\": []\n  },\n\n  \"experience_requirements\": {\n    \"years_required\": \"\",\n    \"level\": \"\",\n    \"domain_experience\": \"\"\n  },\n\n  \"priority_keywords\": {\n    \"high\": [],\n    \"medium\": [],\n    \"low\": []\n  },\n\n  \"resume_optimization\": {\n    \"missing_skills\": [],\n    \"skills_to_add\": [],\n    \"placement_strategy\": {\n      \"skills_section\": [],\n      \"experience_section\": [],\n      \"projects_section\": []\n    }\n  }\n}\n\n---\n\n# 🚨 FINAL EXECUTION RULE\n\n- Return ONLY valid JSON\n- No markdown\n- No explanation\n- No extra text\n- No assumptions\n\nThis output will be used for ATS matching, resume optimization, and job intelligence systems.",
+        "needsFallback": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        0,
+        148
+      ],
+      "id": "07385834-a1f0-45fc-a8af-416d464fc728",
+      "name": "JD extractor",
+      "retryOnFail": true,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "=Resume",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -576,
+        148
+      ],
+      "id": "db1d22ea-3c2b-4d0f-82f6-bc3af1e01397",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert ATS Resume Writer and LaTeX Content Engine.\n\nYour ONLY job is to fill in resume content into the LaTeX skeleton below.\nYou are NOT designing the layout. The structure is fixed. You write words only.\n\n---\n\n# INPUTS\n\n## Resume Data (JSON)\n{{ $('Resume extractor').item.json.output }}\n\n## Job Description Intelligence (JSON)\n{{ $('JD extractor').item.json.output }}\n\n---\n\n# YOUR TASK\n\nUsing the Resume JSON and JD JSON above:\n1. Extract the candidate's real information\n2. Rewrite experience bullets with strong action verbs and JD-matched keywords\n3. Reorder skills so JD-priority skills appear first\n4. Enhance project descriptions to highlight relevant technical impact\n5. Keep all content truthful — do NOT hallucinate or invent facts\n\n---\n\n# ATS OPTIMIZATION RULES\n\n- Inject JD keywords naturally (no stuffing)\n- Use action verbs: Designed, Developed, Automated, Optimized, Built, Executed, Validated, Reduced\n- Keep bullets concise and impact-focused\n- Escape all LaTeX special characters: & → \\&, % → \\%, $ → \\$, # → \\#, _ → \\_\n\n---\n\n# OUTPUT RULES (NON-NEGOTIABLE)\n\n- Output ONLY the complete LaTeX document\n- NO markdown fences (no ```latex)\n- NO explanations, comments, or text outside LaTeX\n- Use REAL newlines — NOT \\n escape sequences\n- Do NOT double-escape backslashes\n- The document MUST compile with pdflatex without errors\n- Ensure all { } braces are properly opened and closed\n- Ensure all \\begin{} have matching \\end{}\n\n---\n\n# COMPLETE LATEX SKELETON — FILL IN THE [CONTENT] ZONES ONLY\n\n\\documentclass[letterpaper,11pt]{article}\n\n\\usepackage[empty]{fullpage}\n\\usepackage{titlesec}\n\\usepackage{enumitem}\n\\usepackage[hidelinks]{hyperref}\n\\usepackage{fancyhdr}\n\\usepackage{tabularx}\n\\usepackage{multicol}\n\\usepackage[T1]{fontenc}\n\n\\pagestyle{fancy}\n\\fancyhf{}\n\\renewcommand{\\headrulewidth}{0pt}\n\\renewcommand{\\footrulewidth}{0pt}\n\n\\addtolength{\\oddsidemargin}{-0.6in}\n\\addtolength{\\textwidth}{1.2in}\n\\addtolength{\\topmargin}{-0.7in}\n\\addtolength{\\textheight}{1.4in}\n\\setlength{\\footskip}{14pt}\n\n\\raggedright\n\\setlength{\\tabcolsep}{0in}\n\n\\titleformat{\\section}{\n  \\vspace{-4pt}\\large\\bfseries\n}{}{0em}{}[\\titlerule \\vspace{-5pt}]\n\n\\newcommand{\\resumeItem}[1]{\n  \\item \\small{#1}\n}\n\n\\newcommand{\\resumeSubheading}[4]{\n  \\item\n  \\begin{tabular*}{\\linewidth}{@{}l@{\\extracolsep{\\fill}}r@{}}\n    \\textbf{#1} & \\textbf{\\small #2} \\\\\n    \\textit{\\small #3} & \\textit{\\small #4}\n  \\end{tabular*}\n}\n\n\\newcommand{\\resumeProject}[2]{\n  \\item\n  \\begin{tabular*}{\\linewidth}{@{}l@{\\extracolsep{\\fill}}r@{}}\n    #1 & \\textbf{\\small #2}\n  \\end{tabular*}\n}\n\n\\newcommand{\\resumeListStart}{\\begin{itemize}[leftmargin=0.15in, label={}]}\n\\newcommand{\\resumeListEnd}{\\end{itemize}}\n\n\\begin{document}\n\n% ============================================================\n% HEADER — Fill candidate name and contact details\n% ============================================================\n\\begin{center}\n  {\\Huge \\textbf{[CANDIDATE FULL NAME]}} \\\\[4pt]\n  \\small\n  [PHONE] $|$\n  \\href{mailto:[EMAIL]}{[EMAIL]} $|$\n  \\href{[LINKEDIN URL]}{linkedin.com/in/[handle]} $|$\n  \\href{[GITHUB URL]}{github.com/[handle]}\n\\end{center}\n\n% ============================================================\n% PROFESSIONAL SUMMARY\n% ============================================================\n\\section{Summary}\n[2–3 sentence professional summary tailored to the JD. Use JD keywords. Keep it punchy.]\n\n% ============================================================\n% SKILLS — Reorder based on JD priority\n% ============================================================\n\\section{Skills}\n\\begin{itemize}[leftmargin=0.15in, label={}, itemsep=1pt]\n  \\small\n  \\item \\textbf{Automation \\& Testing:} [comma-separated skills]\n  \\item \\textbf{Programming Languages:} [comma-separated skills]\n  \\item \\textbf{Frameworks \\& Tools:} [comma-separated skills]\n  \\item \\textbf{API \\& Databases:} [comma-separated skills]\n  \\item \\textbf{Cloud \\& DevOps:} [comma-separated skills]\n  \\item \\textbf{Soft Skills:} [comma-separated skills]\n\\end{itemize}\n\n% ============================================================\n% EXPERIENCE — Add all roles chronologically (most recent first)\n% ============================================================\n\\section{Experience}\n\\resumeListStart\n\n  % --- Role 1 ---\n  \\resumeSubheading\n    {[Company Name]}{[Start Month Year] -- [End Month Year or Present]}\n    {[Job Title]}{[City, Country]}\n  \\begin{itemize}[leftmargin=0.3in, itemsep=1pt]\n    \\resumeItem{[Bullet 1 — action verb + JD keyword + measurable impact]}\n    \\resumeItem{[Bullet 2]}\n    \\resumeItem{[Bullet 3]}\n    \\resumeItem{[Bullet 4 if applicable]}\n  \\end{itemize}\n\n  % --- Role 2 (if exists) ---\n  \\resumeSubheading\n    {[Company Name]}{[Start Month Year] -- [End Month Year]}\n    {[Job Title]}{[City, Country]}\n  \\begin{itemize}[leftmargin=0.3in, itemsep=1pt]\n    \\resumeItem{[Bullet 1]}\n    \\resumeItem{[Bullet 2]}\n    \\resumeItem{[Bullet 3]}\n  \\end{itemize}\n\n\\resumeListEnd\n\n% ============================================================\n% PROJECTS\n% ============================================================\n\\section{Projects}\n\\resumeListStart\n\n  \\resumeProject\n    {\\textbf{[Project Title]} $|$ \\emph{[Tech Stack]}}\n    {[Month Year]}\n  \\begin{itemize}[leftmargin=0.3in, itemsep=1pt]\n    \\resumeItem{[What it does, what you built, impact or outcome]}\n    \\resumeItem{[Technical detail — framework, API, CI/CD, test coverage etc.]}\n  \\end{itemize}\n\n\\resumeListEnd\n\n% ============================================================\n% EDUCATION\n% ============================================================\n\\section{Education}\n\\resumeListStart\n  \\resumeSubheading\n    {[University Name]}{[Start Year] -- [End Year]}\n    {[Degree] in [Field of Study]}{[City, Country]}\n\\resumeListEnd\n\n% ============================================================\n% CERTIFICATIONS (if present in resume data)\n% ============================================================\n\\section{Certifications}\n\\begin{itemize}[leftmargin=0.15in, label={}, itemsep=1pt]\n  \\small\n  \\item [Certification Name — Issuer — Year]\n\\end{itemize}\n\n\\end{document}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are a helpful assistant. Thanks for using this automation agent to generate your customized resume.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        576,
+        148
+      ],
+      "id": "3fd5abdc-e089-4608-a346-47b3bca4afba",
+      "name": "Generated resume unformatted",
+      "retryOnFail": true,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://latex.ytotech.com/builds/sync",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/pdf"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.requestBody }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "pdfData"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1216,
+        0
+      ],
+      "id": "2cdcbd05-8a61-4150-afee-5437d0360209",
+      "name": "Compile latex code",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "-5273070660",
+        "binaryData": true,
+        "binaryPropertyName": "pdfData",
+        "additionalFields": {
+          "caption": "={{ $('Build Caption + Cover Letter').item.json.caption }}",
+          "fileName": "={{ $json.filename }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2080,
+        244
+      ],
+      "id": "976b5753-e2a8-4361-a151-070a0485fad7",
+      "name": "Send resume via telegram",
+      "webhookId": "b457e2c9-ba51-4dc6-a4f2-4c972dc68c46",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "wTgpToi8LViYaKFE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Carry the filename forward alongside the binary PDF data\nconst filename = $('Prepare compilation ready').first().json.filename || \"Resume.pdf\";\nconst candidateName = $('Prepare compilation ready').first().json.candidateName || \"Candidate\";\n\n// Pass binary through untouched, just add metadata\nconst item = $input.first();\n\nreturn [{\n  json: {\n    filename,\n    candidateName\n  },\n  binary: {\n    pdfData: item.binary.pdfData\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        0
+      ],
+      "id": "2c02f085-c16c-4b89-83c1-c04a6abe0749",
+      "name": "Compile & convert to pdf file"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.output || \"\";\n\n// Pull candidate name from Resume extractor for filename\nlet candidateName = \"Candidate\";\ntry {\n  const resumeOutput = $('Resume extractor').first().json.output || \"\";\n  const nameMatch = resumeOutput.match(/\"full_name\"\\s*:\\s*\"([^\"]+)\"/);\n  if (nameMatch) candidateName = nameMatch[1];\n} catch(e) {}\n\n// Sanitize name for filename (remove special chars)\nconst safeFilename = candidateName.replace(/[^a-zA-Z0-9\\s]/g, \"\").trim().replace(/\\s+/g, \"_\") + \"_Resume.pdf\";\n\n// 1. Strip markdown fences\nlet latex = raw\n  .replace(/^```latex\\s*/i, \"\")\n  .replace(/^```\\s*/i, \"\")\n  .replace(/```\\s*$/i, \"\")\n  .trim();\n\n// 2. Strip anything before \\documentclass\nconst docStart = latex.indexOf(\"\\\\documentclass\");\nif (docStart > 0) {\n  latex = latex.slice(docStart);\n}\n\n// 3. Strip anything after \\end{document}\nconst docEnd = latex.lastIndexOf(\"\\\\end{document}\");\nif (docEnd !== -1) {\n  latex = latex.slice(0, docEnd + \"\\\\end{document}\".length);\n}\n\n// 4. Build request body\nconst requestBody = JSON.stringify({\n  compiler: \"pdflatex\",\n  resources: [{ main: true, content: latex }]\n});\n\nreturn [{ \n  json: { \n    requestBody,\n    filename: safeFilename,\n    candidateName,\n    latexPreview: latex.slice(0, 200)\n  } \n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        0
+      ],
+      "id": "dc794a6c-22ca-4ae8-b0f3-d7237027b564",
+      "name": "Prepare compilation ready"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-lite-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1224,
+        520
+      ],
+      "id": "78952b44-36d7-4f84-b2dd-7575a53ba62c",
+      "name": "Google Gemini Chat Model — ATS",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Sef9ciacOYpXNklW",
+          "name": "Google Gemini(PaLM) Api resumeEnhancer"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a senior technical recruiter and ATS (Applicant Tracking System) specialist with 15+ years of experience.\n\nYour task is to score how well a candidate's resume matches a given job description, and identify the top gaps.\n\n---\n\n# INPUTS\n\n## Resume JSON\n{{ $('Resume extractor').item.json.output }}\n\n## Job Description JSON\n{{ $('JD extractor').item.json.output }}\n\n---\n\n# YOUR TASK\n\nPerform a precise ATS match analysis:\n\n1. Compare the candidate's skills, experience, titles, and keywords against the JD's must-have skills, priority keywords, responsibilities, and experience requirements.\n2. Calculate a match score from 0 to 100 based on:\n   - Keyword coverage (high-priority JD keywords found in resume): 40%\n   - Skills alignment (must-have skills present): 30%\n   - Experience relevance (years + domain match): 20%\n   - Role title alignment: 10%\n3. Identify exactly 3 gap bullets — the most impactful things missing or weak in the resume relative to the JD. Keep each bullet under 15 words. Be specific, not generic.\n\n---\n\n# OUTPUT RULES (STRICT)\n\n- Return ONLY valid JSON\n- No markdown, no explanation, no extra text\n- score must be an integer 0–100\n- gaps must be an array of exactly 3 strings\n- recommendation must be one of: \"Strong Match\", \"Good Match\", \"Moderate Match\", \"Weak Match\"\n\n---\n\n# OUTPUT FORMAT\n\n{\n  \"score\": 0,\n  \"recommendation\": \"\",\n  \"gaps\": [\n    \"Gap 1 — specific missing skill or experience\",\n    \"Gap 2 — specific missing keyword or responsibility\",\n    \"Gap 3 — specific alignment issue\"\n  ],\n  \"top_matching_keywords\": []\n}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1152,
+        296
+      ],
+      "id": "eb389777-22bb-4738-be36-a494db401aa0",
+      "name": "ATS Score Agent",
+      "retryOnFail": true,
+      "maxTries": 3
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-lite-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1576,
+        520
+      ],
+      "id": "95cb320e-89c5-4d52-a918-307547daff9d",
+      "name": "Google Gemini Chat Model — CoverLetter",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Sef9ciacOYpXNklW",
+          "name": "Google Gemini(PaLM) Api resumeEnhancer"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an elite career coach and professional cover letter writer.\n\nYour task is to write a compelling, personalized cover letter in clean HTML format — ready to be sent as an email or saved as a file.\n\n---\n\n# INPUTS\n\n## Resume JSON\n{{ $('Resume extractor').item.json.output }}\n\n## Job Description JSON\n{{ $('JD extractor').item.json.output }}\n\n## ATS Analysis\n{{ $('ATS Score Agent').item.json.output }}\n\n---\n\n# YOUR TASK\n\nWrite a professional cover letter that:\n1. Opens with a strong, specific hook — reference the company/role directly\n2. Paragraph 1: Why this role and company specifically (use JD intelligence)\n3. Paragraph 2: 2–3 strongest matching achievements from resume (quantified where possible)\n4. Paragraph 3: Address the biggest skill gap from ATS analysis — turn it into a learning narrative\n5. Closes with a confident, action-oriented call to action\n6. Tone: Professional but human — not robotic, not sycophantic\n\n---\n\n# STRICT RULES\n\n- Use ONLY real data from the Resume JSON — never hallucinate names, companies, or achievements\n- Keep total length to 300–380 words\n- Do NOT use clichés: \"I am writing to apply\", \"passion for\", \"team player\", \"go-getter\"\n- Use the candidate's actual name from the resume\n- Use the company name and role title from the JD if available, else use generic references\n- No placeholders like [Company Name] — if data is unavailable, write naturally around it\n\n---\n\n# OUTPUT FORMAT\n\nReturn ONLY a complete HTML document — no markdown fences, no explanation outside HTML.\n\nThe HTML must:\n- Be self-contained (inline CSS only, no external stylesheets)\n- Render cleanly in Gmail and standard email clients\n- Use a clean, professional font stack: font-family: Georgia, serif\n- Max width: 700px, centered\n- Include: candidate name as header, today's date, role applied for, full letter body, signature block\n\nStructure:\n<!DOCTYPE html>\n<html>\n<head><meta charset=\"UTF-8\"></head>\n<body style=\"font-family: Georgia, serif; max-width: 700px; margin: 40px auto; color: #1a1a1a; line-height: 1.7;\">\n  [FULL COVER LETTER HTML HERE]\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1504,
+        296
+      ],
+      "id": "52602f9d-9c98-4d5d-a6ca-9dc5c9c70396",
+      "name": "Cover Letter Agent",
+      "retryOnFail": true,
+      "maxTries": 3
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// ── Parse ATS Score ──────────────────────────────────────\nlet atsScore = 0;\nlet atsRecommendation = \"N/A\";\nlet atsGaps = [];\nlet atsKeywords = [];\n\ntry {\n  const atsRaw = $('ATS Score Agent').first().json.output || \"\";\n  const atsClean = atsRaw\n    .replace(/```json/gi, \"\")\n    .replace(/```/g, \"\")\n    .trim();\n  const firstBrace = atsClean.indexOf(\"{\");\n  const lastBrace = atsClean.lastIndexOf(\"}\");\n  const atsJson = JSON.parse(atsClean.slice(firstBrace, lastBrace + 1));\n  atsScore = atsJson.score || 0;\n  atsRecommendation = atsJson.recommendation || \"N/A\";\n  atsGaps = atsJson.gaps || [];\n  atsKeywords = atsJson.top_matching_keywords || [];\n} catch(e) {\n  atsGaps = [\"Could not parse ATS analysis\"];\n}\n\n// ── Score emoji bar ───────────────────────────────────────\nfunction scoreBar(score) {\n  const filled = Math.round(score / 10);\n  return \"🟩\".repeat(filled) + \"⬜\".repeat(10 - filled);\n}\n\nfunction recommendationEmoji(rec) {\n  if (rec.includes(\"Strong\")) return \"🚀\";\n  if (rec.includes(\"Good\")) return \"✅\";\n  if (rec.includes(\"Moderate\")) return \"⚠️\";\n  return \"🔴\";\n}\n\n// ── Build Telegram caption ────────────────────────────────\nconst candidateName = $('Compile & convert to pdf file').first().json.candidateName || \"Candidate\";\nconst filename = $('Compile & convert to pdf file').first().json.filename || \"Resume.pdf\";\n\nconst gapLines = atsGaps.map((g, i) => `   ${i + 1}. ${g}`).join(\"\\n\");\n\nconst caption = `${recommendationEmoji(atsRecommendation)} *${candidateName}* — Resume Ready\n\n📊 *ATS Match Score: ${atsScore}/100*\n${scoreBar(atsScore)} ${atsRecommendation}\n\n🔍 *Top Gaps to Address:*\n${gapLines}\n\n📄 File: ${filename}\n🤖 ATS-optimized & JD-matched`;\n\n// ── Clean Cover Letter HTML ───────────────────────────────\nlet coverLetterHtml = \"\";\ntry {\n  const clRaw = $('Cover Letter Agent').first().json.output || \"\";\n  coverLetterHtml = clRaw\n    .replace(/^```html\\s*/i, \"\")\n    .replace(/^```\\s*/i, \"\")\n    .replace(/```\\s*$/i, \"\")\n    .trim();\n  // Ensure it starts at <!DOCTYPE\n  const dtIdx = coverLetterHtml.indexOf(\"<!DOCTYPE\");\n  const htmlIdx = coverLetterHtml.indexOf(\"<html\");\n  const startIdx = dtIdx !== -1 ? dtIdx : (htmlIdx !== -1 ? htmlIdx : 0);\n  if (startIdx > 0) coverLetterHtml = coverLetterHtml.slice(startIdx);\n} catch(e) {\n  coverLetterHtml = \"<html><body><p>Cover letter generation failed.</p></body></html>\";\n}\n\n// ── Convert HTML to binary for Telegram ──────────────────\nconst htmlBytes = Buffer.from(coverLetterHtml, \"utf-8\");\nconst htmlBase64 = htmlBytes.toString(\"base64\");\n\n// Pass through the PDF binary too\nconst pdfBinary = $('Compile & convert to pdf file').first().binary?.pdfData;\n\nreturn [{\n  json: {\n    caption,\n    filename,\n    candidateName,\n    atsScore,\n    atsRecommendation,\n    coverLetterFilename: candidateName.replace(/[^a-zA-Z0-9\\s]/g,\"\").trim().replace(/\\s+/g,\"_\") + \"_CoverLetter.html\",\n    coverLetterHtml,\n    htmlBase64\n  },\n  binary: {\n    pdfData: pdfBinary,\n    coverLetterFile: {\n      data: htmlBase64,\n      mimeType: \"text/html\",\n      fileName: candidateName.replace(/[^a-zA-Z0-9\\s]/g,\"\").trim().replace(/\\s+/g,\"_\") + \"_CoverLetter.html\",\n      fileExtension: \"html\"\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1856,
+        148
+      ],
+      "id": "28224cfc-52ef-475d-8df0-c3b2dbd1970b",
+      "name": "Build Caption + Cover Letter"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "-5273070660",
+        "binaryData": true,
+        "binaryPropertyName": "coverLetterFile",
+        "additionalFields": {
+          "caption": "=📝 Cover Letter for {{ $json.candidateName }}",
+          "fileName": "={{ $json.coverLetterFilename }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2080,
+        52
+      ],
+      "id": "b7459091-518d-48f2-b639-944a09e9d471",
+      "name": "Send Cover Letter via Telegram",
+      "webhookId": "db4081bc-9601-442c-bad2-3e378da4ea00",
+      "credentials": {
+        "telegramApi": {
+          "id": "wTgpToi8LViYaKFE",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        352,
+        148
+      ],
+      "id": "b4096189-befd-4d8f-9162-1220fe770c9f",
+      "name": "Wait for Resume & JD"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -216,
+        372
+      ],
+      "id": "23447079-80fb-4e9c-9494-8375c6382f48",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "KxTIboD2Q42EFry6",
+          "name": "OpenAI API 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        136,
+        372
+      ],
+      "id": "564827e7-7da1-404a-98c4-928747fc6e4c",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "KxTIboD2Q42EFry6",
+          "name": "OpenAI API 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        712,
+        372
+      ],
+      "id": "2272dbfb-1b5b-415d-8141-63ddaf4b0153",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "KxTIboD2Q42EFry6",
+          "name": "OpenAI API 1"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Resume & JD submitted": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Resume extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "JD extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generated resume unformatted",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume extractor": {
+      "main": [
+        [
+          {
+            "node": "JD extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JD extractor": {
+      "main": [
+        [
+          {
+            "node": "Wait for Resume & JD",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Resume extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generated resume unformatted": {
+      "main": [
+        [
+          {
+            "node": "Prepare compilation ready",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ATS Score Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compile latex code": {
+      "main": [
+        [
+          {
+            "node": "Compile & convert to pdf file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compile & convert to pdf file": {
+      "main": [
+        [
+          {
+            "node": "Build Caption + Cover Letter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare compilation ready": {
+      "main": [
+        [
+          {
+            "node": "Compile latex code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model — ATS": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "ATS Score Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ATS Score Agent": {
+      "main": [
+        [
+          {
+            "node": "Cover Letter Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model — CoverLetter": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Cover Letter Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cover Letter Agent": {
+      "main": [
+        [
+          {
+            "node": "Build Caption + Cover Letter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Caption + Cover Letter": {
+      "main": [
+        [
+          {
+            "node": "Send resume via telegram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Cover Letter via Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Resume & JD": {
+      "main": [
+        [
+          {
+            "node": "Generated resume unformatted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Resume extractor",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "JD extractor",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generated resume unformatted",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5c3fb3c2-16f9-4d4b-8436-14f91e2763e4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7f8bacde112c47fc748772d11341a088e5a9305096bfe1e55b37f2f4b841d2ee"
+  },
+  "id": "qPRX9GTElYPBRx3d",
+  "tags": [
+    {
+      "updatedAt": "2026-05-03T17:43:55.457Z",
+      "createdAt": "2026-05-03T17:43:55.457Z",
+      "id": "Hrw0g3bj9QrnGsuo",
+      "name": "JobDescription"
+    },
+    {
+      "updatedAt": "2026-05-03T17:43:35.061Z",
+      "createdAt": "2026-05-03T17:43:35.061Z",
+      "id": "J5IbgeaiMsSFHKjm",
+      "name": "resume"
+    },
+    {
+      "updatedAt": "2026-04-18T14:44:56.898Z",
+      "createdAt": "2026-04-18T14:44:56.898Z",
+      "id": "jFWfUUdLszP2d4Uq",
+      "name": "jobs"
+    },
+    {
+      "updatedAt": "2026-05-03T17:43:49.407Z",
+      "createdAt": "2026-05-03T17:43:49.407Z",
+      "id": "ynCkmHungfXYPtrf",
+      "name": "optimized-resume"
+    }
+  ]
+}
