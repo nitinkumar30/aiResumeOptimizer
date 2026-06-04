@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Resume Optimizer — Workflow Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    background: #0f0c29; font-family: 'Segoe UI', Arial, sans-serif; 
+    display: flex; justify-content: center; padding: 30px; color: #e0e0e0;
+  }
+  .demo-container { max-width: 960px; width: 100%; }
+  .header { text-align: center; padding: 24px; background: linear-gradient(135deg,#1a1a4e,#24243e); border-radius: 16px; margin-bottom: 24px; border: 1px solid rgba(102,126,234,0.3); }
+  .header h1 { font-size: 28px; background: linear-gradient(90deg,#667eea,#764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .header p { color: #9ca3af; font-size: 14px; margin-top: 6px; }
+  .controls { display: flex; gap: 12px; align-items: center; justify-content: center; margin: 16px 0; }
+  .controls button { padding: 10px 28px; border-radius: 25px; border: 1px solid rgba(102,126,234,0.4); background: rgba(102,126,234,0.15); color: #e0e0e0; cursor: pointer; font-size: 14px; font-weight: 600; transition: all .3s; }
+  .controls button:hover { background: rgba(102,126,234,0.3); transform: scale(1.03); }
+  .controls button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .controls .step-indicator { color: #6b7280; font-size: 14px; min-width: 120px; text-align: center; }
+  .workflow-canvas { background: #111; border-radius: 16px; padding: 24px; border: 1px solid #1e1b4b; position: relative; min-height: 500px; overflow: hidden; }
+  .node { display: flex; align-items: center; gap: 16px; padding: 16px 20px; margin: 10px 0; border-radius: 12px; background: rgba(30,27,75,0.8); border: 1.5px solid #374151; transition: all .6s; opacity: 0.3; }
+  .node.active { opacity: 1; border-color: #667eea; background: rgba(49,46,129,0.9); box-shadow: 0 0 20px rgba(102,126,234,0.2); }
+  .node.done { opacity: 1; border-color: #34d399; background: rgba(6,78,59,0.4); }
+  .node.error { opacity: 1; border-color: #f87274; background: rgba(127,29,29,0.4); }
+  .node-icon { font-size: 28px; width: 48px; text-align: center; }
+  .node-info { flex: 1; }
+  .node-title { font-size: 15px; font-weight: 600; color: #e0e0e0; }
+  .node-desc { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+  .node-status { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; min-width: 80px; text-align: center; }
+  .node-status.pending { background: rgba(156,163,175,0.15); color: #6b7280; }
+  .node-status.running { background: rgba(102,126,234,0.2); color: #818cf8; }
+  .node-status.done { background: rgba(52,211,153,0.2); color: #34d399; }
+  .connection-line { width: 2px; height: 16px; background: #374151; margin-left: 38px; transition: all .6s; }
+  .connection-line.active { background: #667eea; box-shadow: 0 0 8px rgba(102,126,234,0.4); }
+  .progress-bar { height: 4px; background: #1e1b4b; border-radius: 2px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg,#667eea,#764ba2); border-radius: 2px; transition: width .8s; width: 0%; }
+  .log-panel { margin-top: 16px; background: #0a0a1a; border-radius: 12px; padding: 16px; border: 1px solid #1e1b4b; font-family: 'Courier New', monospace; font-size: 12px; height: 120px; overflow-y: auto; }
+  .log-panel div { padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .log-panel .time { color: #6b7280; }
+  .log-panel .msg { color: #9ca3af; }
+  .log-panel .msg.done { color: #34d399; }
+  .log-panel .msg.running { color: #818cf8; }
+  .branch-group { display: flex; gap: 20px; }
+  .branch { flex: 1; }
+  @media (max-width: 700px) { .branch-group { flex-direction: column; } }
+</style>
+</head>
+<body>
+<div class="demo-container">
+  <div class="header">
+    <h1>AI Resume Optimizer — Live Workflow Simulation</h1>
+    <p>Watch the n8n automation process a resume step-by-step</p>
+  </div>
+
+  <div class="controls">
+    <button id="playBtn" onclick="startDemo()">▶ Play Demo</button>
+    <button onclick="resetDemo()">↺ Reset</button>
+    <span class="step-indicator" id="stepIndicator">Ready</span>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="workflow-canvas" id="canvas">
+    <!-- Nodes will be rendered by JS -->
+  </div>
+
+  <div class="log-panel" id="logPanel">
+    <div><span class="time">[--:--:--]</span> <span class="msg">Workflow loaded. Press ▶ Play Demo to start.</span></div>
+  </div>
+</div>
+
+<script>
+const workflow = [
+  { id: 'trigger', icon: '📝', title: 'Resume &amp; JD submitted', desc: 'Form Trigger — Web form collects Resume file + JD text', branch: 'main' },
+  { id: 'extract', icon: '📂', title: 'Extract from File', desc: 'Reads PDF/DOCX binary → Plain text', branch: 'main' },
+  { id: 'resume-parser', icon: '🧠', title: 'Resume extractor', desc: 'AI Agent — Text → Structured JSON (anti-hallucination)', branch: 'main' },
+  { id: 'jd-parser', icon: '🎯', title: 'JD extractor', desc: 'AI Agent — JD → Domain, Skills, Keywords, Priority', branch: 'main' },
+  { id: 'merge', icon: '🔀', title: 'Wait for Resume &amp; JD', desc: 'Merge Node — Syncs both JSON outputs', branch: 'main' },
+  { id: 'latex-gen', icon: '✍️', title: 'Generated resume unformatted', desc: 'AI Agent — Fills LaTeX skeleton with ATS-optimized content', branch: 'main' },
+  { id: 'prepare', icon: '🔧', title: 'Prepare compilation ready', desc: 'Code (JS) — Strips markdown, extracts name, builds API body', branch: 'main' },
+  { id: 'ats-score', icon: '📊', title: 'ATS Score Agent', desc: 'AI Agent — 0-100 match score + 3 targeted gaps', branch: 'ats' },
+  { id: 'cover-letter', icon: '📝', title: 'Cover Letter Agent', desc: 'AI Agent — 5-paragraph HTML cover letter', branch: 'ats' },
+  { id: 'compile', icon: '🖨️', title: 'Compile latex code', desc: 'HTTP Request — pdflatex via ytotech.com → PDF binary', branch: 'main' },
+  { id: 'convert', icon: '📄', title: 'Compile &amp; convert to pdf', desc: 'Code (JS) — Attaches filename metadata', branch: 'main' },
+  { id: 'caption', icon: '🔗', title: 'Build Caption + Cover Letter', desc: 'Code (JS) — Score bar emoji + HTML attachment', branch: 'main' },
+  { id: 'telegram-pdf', icon: '📬', title: 'Send resume via Telegram', desc: 'Telegram — PDF with ATS score caption', branch: 'final' },
+  { id: 'telegram-cl', icon: '💌', title: 'Send Cover Letter via Telegram', desc: 'Telegram — HTML cover letter document', branch: 'final' }
+];
+
+const logs = [
+  { time: '00:00:01', msg: '📝 Form submitted — Resume + JD received', cls: 'done' },
+  { time: '00:00:02', msg: '📂 Extracting text from resume file...', cls: 'running' },
+  { time: '00:00:03', msg: '📂 Resume text extracted successfully', cls: 'done' },
+  { time: '00:00:04', msg: '🧠 Sending resume to AI parser (Gemini/GPT)...', cls: 'running' },
+  { time: '00:00:08', msg: '🧠 Resume JSON parsed — identity, skills, history extracted', cls: 'done' },
+  { time: '00:00:09', msg: '🎯 Sending JD to AI analyzer...', cls: 'running' },
+  { time: '00:00:13', msg: '🎯 JD analyzed — domain, keywords, priorities identified', cls: 'done' },
+  { time: '00:00:14', msg: '🔀 Both JSONs synced at merge node', cls: 'done' },
+  { time: '00:00:15', msg: '✍️ Generating ATS-optimized LaTeX resume...', cls: 'running' },
+  { time: '00:00:22', msg: '✍️ LaTeX resume generated — action verbs + JD keywords injected', cls: 'done' },
+  { time: '00:00:23', msg: '📊 Calculating ATS match score...', cls: 'running' },
+  { time: '00:00:26', msg: '📊 ATS Score: 85/100 — Strong Match', cls: 'done' },
+  { time: '00:00:27', msg: '📝 Writing personalized cover letter...', cls: 'running' },
+  { time: '00:00:32', msg: '📝 Cover letter generated — 340 words, HTML format', cls: 'done' },
+  { time: '00:00:33', msg: '🔧 Cleaning LaTeX — stripping markdown fences', cls: 'running' },
+  { time: '00:00:34', msg: '🔧 Building API request for pdfLaTeX compiler', cls: 'done' },
+  { time: '00:00:35', msg: '🖨️ Sending LaTeX to compilation API...', cls: 'running' },
+  { time: '00:00:40', msg: '🖨️ PDF compiled successfully — 3 pages', cls: 'done' },
+  { time: '00:00:41', msg: '📄 Attaching filename: Nitin_Kumar_Resume.pdf', cls: 'done' },
+  { time: '00:00:42', msg: '🔗 Building Telegram caption with ATS score bar', cls: 'done' },
+  { time: '00:00:43', msg: '📬 Sending resume PDF via Telegram...', cls: 'running' },
+  { time: '00:00:44', msg: '💌 Sending cover letter HTML via Telegram...', cls: 'running' },
+  { time: '00:00:45', msg: '✅ All deliveries complete! Check Telegram.', cls: 'done' }
+];
+
+let currentStep = -1;
+let timer = null;
+
+function renderNodes() {
+  const canvas = document.getElementById('canvas');
+  let html = '';
+  let mainNodes = workflow.filter(n => n.branch === 'main');
+  let atsBranch = workflow.filter(n => n.branch === 'ats');
+  let finalNodes = workflow.filter(n => n.branch === 'final');
+  
+  html += '<div class="branch-group">';
+  html += '<div class="branch">';
+  mainNodes.forEach(n => html += renderNode(n, 'pending'));
+  html += '</div><div class="branch">';
+  html += renderNode(atsBranch[0], 'pending');
+  html += '<div class="connection-line" id="cl-ats-cover"></div>';
+  html += renderNode(atsBranch[1], 'pending');
+  html += '</div></div>';
+  
+  html += '<div class="branch-group">';
+  html += '<div class="branch">';
+  finalNodes.forEach(n => html += renderNode(n, 'pending'));
+  html += '</div></div>';
+  
+  canvas.innerHTML = html;
+}
+
+function renderNode(node, status) {
+  return `
+    <div class="node ${status}" id="node-${node.id}" data-branch="${node.branch}">
+      <div class="node-icon">${node.icon}</div>
+      <div class="node-info">
+        <div class="node-title">${node.title}</div>
+        <div class="node-desc">${node.desc}</div>
+      </div>
+      <div class="node-status ${status}" id="status-${node.id}">${status === 'done' ? '✅ Done' : status === 'running' ? '⏳ Running...' : '⏸ Pending'}</div>
+    </div>
+    ${node.id !== 'telegram-cl' ? '<div class="connection-line" id="conn-' + node.id + '"></div>' : ''}
+  `;
+}
+
+function setNodeState(id, state) {
+  const node = document.getElementById('node-' + id);
+  if (!node) return;
+  node.className = 'node ' + state;
+  const status = document.getElementById('status-' + id);
+  if (status) {
+    status.className = 'node-status ' + state;
+    status.textContent = state === 'done' ? '✅ Done' : state === 'running' ? '⏳ Running...' : state === 'error' ? '❌ Error' : '⏸ Pending';
+  }
+}
+
+function setConnActive(id) {
+  const conn = document.getElementById('conn-' + id);
+  if (conn) conn.classList.add('active');
+}
+
+function addLog(time, msg, cls) {
+  const panel = document.getElementById('logPanel');
+  const div = document.createElement('div');
+  div.innerHTML = `<span class="time">[${time}]</span> <span class="msg ${cls}">${msg}</span>`;
+  panel.appendChild(div);
+  panel.scrollTop = panel.scrollHeight;
+}
+
+function startDemo() {
+  if (timer) return;
+  document.getElementById('playBtn').disabled = true;
+  document.getElementById('playBtn').textContent = '⏳ Running...';
+  currentStep = -1;
+  advanceStep();
+}
+
+function advanceStep() {
+  currentStep++;
+  if (currentStep >= logs.length) {
+    done();
+    return;
+  }
+
+  const log = logs[currentStep];
+  const pct = Math.round((currentStep / logs.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('stepIndicator').textContent = `Step ${currentStep + 1}/${logs.length}`;
+
+  addLog(log.time, log.msg, log.cls);
+
+  // Map log index to node states
+  const activeNodes = [
+    [], // 0
+    ['trigger'], // 1
+    ['trigger'], // 2
+    ['extract'], // 3
+    ['extract'], // 4
+    ['resume-parser'], // 5
+    ['resume-parser'], // 6
+    ['jd-parser'], // 7
+    ['jd-parser'], // 8
+    ['merge'], // 9
+    ['latex-gen'], // 10
+    ['latex-gen'], // 11
+    ['ats-score'], // 12
+    ['ats-score'], // 13
+    ['cover-letter'], // 14
+    ['cover-letter'], // 15
+    ['prepare'], // 16
+    ['prepare'], // 17
+    ['compile'], // 18
+    ['compile'], // 19
+    ['convert'], // 20
+    ['caption'], // 21
+    ['telegram-pdf'], // 22
+    ['telegram-cl'], // 23
+    ['telegram-pdf','telegram-cl'], // 24
+    ['telegram-pdf','telegram-cl'], // 25
+  ];
+
+  const doneNodes = [
+    [], // 0
+    ['trigger'], // 1
+    ['trigger'], // 2
+    ['extract'], // 3
+    ['trigger','extract'], // 4
+    ['trigger','extract','resume-parser'], // 5
+    ['trigger','extract','resume-parser'], // 6
+    ['trigger','extract','jd-parser'], // 7
+    ['trigger','extract','resume-parser','jd-parser'], // 8
+    ['trigger','extract','resume-parser','jd-parser','merge'], // 9
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen'], // 10
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen'], // 11
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','ats-score'], // 12
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','ats-score'], // 13
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','ats-score','cover-letter'], // 14
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','ats-score','cover-letter'], // 15
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare'], // 16
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare'], // 17
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile'], // 18
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile'], // 19
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert'], // 20
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert','caption'], // 21
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert','caption','telegram-pdf'], // 22
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert','caption','telegram-cl'], // 23
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert','caption','telegram-pdf','telegram-cl'], // 24
+    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert','caption','telegram-pdf','telegram-cl'], // 25
+  ];
+
+  // Set active nodes
+  if (activeNodes[currentStep]) {
+    workflow.forEach(n => {
+      if (doneNodes[currentStep] && doneNodes[currentStep].includes(n.id)) {
+        setNodeState(n.id, 'done');
+      } else if (activeNodes[currentStep].includes(n.id)) {
+        setNodeState(n.id, 'running');
+      } else {
+        setNodeState(n.id, 'pending');
+      }
+    });
+  }
+
+  // Active connections
+  if (currentStep > 0 && currentStep < 9) {
+    const connMap = ['trigger','trigger','extract','extract','resume-parser','jd-parser','jd-parser','merge'];
+    if (connMap[currentStep-1]) setConnActive(connMap[currentStep-1]);
+  }
+
+  timer = setTimeout(advanceStep, currentStep < 3 ? 800 : currentStep < 10 ? 1000 : currentStep < 18 ? 1200 : 600);
+}
+
+function done() {
+  clearTimeout(timer);
+  timer = null;
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('stepIndicator').textContent = '✅ Complete!';
+  document.getElementById('playBtn').disabled = false;
+  document.getElementById('playBtn').textContent = '▶ Replay';
+  addLog('00:00:45', '🎉 Workflow complete! PDF + Cover Letter + ATS Score sent to Telegram.', 'done');
+}
+
+function resetDemo() {
+  clearTimeout(timer);
+  timer = null;
+  currentStep = -1;
+  document.getElementById('playBtn').disabled = false;
+  document.getElementById('playBtn').textContent = '▶ Play Demo';
+  document.getElementById('stepIndicator').textContent = 'Ready';
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('logPanel').innerHTML = '<div><span class="time">[--:--:--]</span> <span class="msg">Workflow loaded. Press ▶ Play Demo to start.</span></div>';
+  workflow.forEach(n => setNodeState(n.id, 'pending'));
+  document.querySelectorAll('.connection-line').forEach(el => el.classList.remove('active'));
+}
+
+renderNodes();
+</script>
+</body>
+</html>

@@ -7,6 +7,7 @@
 ## 📌 Table of Contents
 
 - [✨ Overview](#-overview)
+- [🎬 Live Demo](#-live-demo)
 - [⚙️ How It Works](#️-how-it-works)
 - [🗺️ Workflow Architecture](#️-workflow-architecture)
 - [🔩 Node-by-Node Breakdown](#-node-by-node-breakdown)
@@ -14,6 +15,7 @@
 - [📋 Prerequisites](#-prerequisites)
 - [🛠️ Setup & Configuration](#️-setup--configuration)
 - [🚀 Running the Workflow](#-running-the-workflow)
+- [📦 Deployment](#-deployment)
 - [📊 ATS Scoring Engine](#-ats-scoring-engine)
 - [📝 Cover Letter Generator](#-cover-letter-generator)
 - [💡 Enhancement Ideas](#-enhancement-ideas)
@@ -25,6 +27,10 @@
 ---
 
 ## ✨ Overview
+
+<p align="center">
+  <img src="assets/overview-banner.svg" alt="Overview Banner" width="800"/>
+</p>
 
 This **n8n automation workflow** takes your existing resume (PDF or DOCX) and a job description, then does all the heavy lifting — fully automatically! 🦾
 
@@ -50,7 +56,31 @@ This **n8n automation workflow** takes your existing resume (PDF or DOCX) and a 
 
 ---
 
+## 🎬 Live Demo
+
+> Watch the n8n workflow process a resume step-by-step — from form submission to Telegram delivery.
+
+<p align="center">
+  <a href="assets/workflow-demo.html">
+    <img src="assets/workflow-demo.svg" alt="Workflow Demo" width="900"/>
+  </a>
+  <br/>
+  <em>👆 Click the image above to launch the interactive workflow simulation</em>
+</p>
+
+<p align="center">
+  <a href="AI_Resume_Optimizer_Presentation.pptx">
+    <img src="https://img.shields.io/badge/📊-Download_Presentation-blue?style=for-the-badge" alt="Download Presentation"/>
+  </a>
+</p>
+
+---
+
 ## ⚙️ How It Works
+
+<p align="center">
+  <img src="assets/workflow-banner.svg" alt="Workflow Banner" width="800"/>
+</p>
 
 ```
 User submits Resume + Job Description via Web Form
@@ -321,6 +351,10 @@ The workflow supports **two AI providers** with fallback capability:
 
 ## 🛠️ Setup & Configuration
 
+<p align="center">
+  <img src="assets/setup-banner.svg" alt="Setup Banner" width="800"/>
+</p>
+
 ### Step 1 — Import the Workflow 📥
 
 1. Open your n8n instance
@@ -392,7 +426,58 @@ The workflow supports **two AI providers** with fallback capability:
 
 ---
 
+## 📦 Deployment
+
+<p align="center">
+  <img src="assets/deployment-banner.svg" alt="Deployment Banner" width="800"/>
+</p>
+
+### Option 1: Local n8n (Docker) 🐳
+
+Run n8n on your own machine with a single command:
+
+```bash
+docker run -it --rm \
+  --name n8n \
+  -p 5678:5678 \
+  -v ~/.n8n:/home/node/.n8n \
+  docker.n8n.io/n8nio/n8n
+```
+
+Then open `http://localhost:5678` → **Workflows** → **Import** → upload the `.json` file.
+
+### Option 2: n8n.cloud (Managed) ☁️
+
+1. Sign up at [n8n.cloud](https://n8n.cloud) (free tier available)
+2. Create a new workflow → **Import** → upload the `.json` file
+3. Configure credentials (Gemini, Telegram) in the UI
+
+### Option 3: Railway / Render 🚂
+
+Deploy from GitHub in one click:
+
+| Platform | Link |
+|----------|------|
+| **Railway** | [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/n8n) |
+| **Render** | [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/n8n-io/n8n) |
+
+### Post-Deployment Checklist ✅
+
+1. 🔑 Add **Google PaLM API** credential (for Gemini)
+2. 🤖 Add **Telegram Bot** credential (from @BotFather)
+3. 🆔 Set **Chat ID** in Telegram nodes
+4. 🔗 Copy the **Production URL** from Form Trigger
+5. 🚀 **Activate** the workflow
+
+> 💡 All AI model configurations and credentials are managed through the n8n UI — no code changes needed!
+
+---
+
 ## 📊 ATS Scoring Engine
+
+<p align="center">
+  <img src="assets/ats-scoring-banner.svg" alt="ATS Scoring Banner" width="800"/>
+</p>
 
 The ATS Score Agent uses a **4-factor weighted scoring model**:
 

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="250" viewBox="0 0 800 250">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/><stop offset="50%" style="stop-color:#1a1a4e"/><stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#60a5fa"/><stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="250" fill="url(#bg)" rx="12"/>
+  <rect x="0" y="0" width="800" height="4" fill="url(#accent)"/>
+  <text x="50" y="65" font-family="Arial, sans-serif" font-size="36" font-weight="800" fill="url(#accent)">Setup &amp; Configuration</text>
+  <text x="50" y="100" font-family="Arial, sans-serif" font-size="16" fill="#93c5fd">5 Steps — From Zero to Generating Resumes</text>
+  <text x="50" y="140" font-family="Arial, sans-serif" font-size="13" fill="#d1d5db">📥 1. Import Workflow → 🔑 2. Configure AI Credentials</text>
+  <text x="50" y="165" font-family="Arial, sans-serif" font-size="13" fill="#d1d5db">🤖 3. Create Telegram Bot → 🆔 4. Get Chat ID → ✅ 5. Activate &amp; Share</text>
+  <rect x="50" y="190" width="700" height="1" fill="#2d2d5e"/>
+  <text x="50" y="220" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">n8n v2.14+ • Free Gemini API • Optional OpenAI key • Internet to latex.ytotech.com</text>
+</svg>

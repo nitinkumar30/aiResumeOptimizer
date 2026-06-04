@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="250" viewBox="0 0 800 250">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/><stop offset="50%" style="stop-color:#1a1a4e"/><stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="250" fill="url(#bg)" rx="12"/>
+  <rect x="0" y="0" width="800" height="4" fill="url(#accent)"/>
+  <text x="50" y="65" font-family="Arial, sans-serif" font-size="36" font-weight="800" fill="url(#accent)">Deployment Guide</text>
+  <text x="50" y="100" font-family="Arial, sans-serif" font-size="16" fill="#93c5fd">Self-Hosted n8n on Your Own Infrastructure</text>
+  <text x="50" y="140" font-family="Arial, sans-serif" font-size="13" fill="#d1d5db">Option 1: Local n8n — docker run -it --rm --name n8n -p 5678:5678 docker.n8n.io/n8nio/n8n</text>
+  <text x="50" y="165" font-family="Arial, sans-serif" font-size="13" fill="#d1d5db">Option 2: n8n.cloud — Managed SaaS (free tier available)</text>
+  <text x="50" y="190" font-family="Arial, sans-serif" font-size="13" fill="#d1d5db">Option 3: Railway/Render — One-click deploy from GitHub repo</text>
+  <rect x="50" y="210" width="700" height="1" fill="#2d2d5e"/>
+  <text x="50" y="237" font-family="Arial, sans-serif" font-size="11" fill="#6b7280">Import .json → Add API keys → Toggle Active → Share the form URL. That's it!</text>
+</svg>

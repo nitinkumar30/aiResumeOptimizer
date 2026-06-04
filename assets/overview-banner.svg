@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="250" viewBox="0 0 800 250">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/><stop offset="50%" style="stop-color:#1a1a4e"/><stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea"/><stop offset="50%" style="stop-color:#764ba2"/><stop offset="100%" style="stop-color:#f093fb"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="250" fill="url(#bg)" rx="12"/>
+  <rect x="0" y="0" width="800" height="4" fill="url(#accent)"/>
+  <text x="50" y="65" font-family="Arial, sans-serif" font-size="36" font-weight="800" fill="url(#accent)">Overview</text>
+  <text x="50" y="100" font-family="Arial, sans-serif" font-size="16" fill="#93c5fd">Automated ATS-Optimized Resume Generation</text>
+  <text x="50" y="135" font-family="Arial, sans-serif" font-size="14" fill="#9ca3af">Parses your resume + a job description → AI rewrites, ATS-scores, compiles PDF,</text>
+  <text x="50" y="155" font-family="Arial, sans-serif" font-size="14" fill="#9ca3af">generates cover letter, and delivers everything to Telegram. All in ~60-90 seconds.</text>
+  <rect x="50" y="180" width="700" height="1" fill="#2d2d5e"/>
+  <text x="50" y="210" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">n8n • Google Gemini • OpenAI GPT • LaTeX • Telegram • $0 running cost</text>
+</svg>
