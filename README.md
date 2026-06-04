@@ -426,50 +426,93 @@ The workflow supports **two AI providers** with fallback capability:
 
 ---
 
-## 📦 Deployment
+## 📦 Deployment (Cloudflare Tunnel)
 
 <p align="center">
   <img src="assets/deployment-banner.svg" alt="Deployment Banner" width="800"/>
 </p>
 
-### Option 1: Local n8n (Docker) 🐳
+This project uses **Cloudflare Tunnel** for local deployment — no Docker, no ngrok, no cloud subscriptions. Just your PC, Python, and a free Cloudflare tunnel. 🚀
 
-Run n8n on your own machine with a single command:
+### ✅ Why Cloudflare Tunnel?
 
+| Benefit | Why It Matters |
+|---------|---------------|
+| 🆓 **Free HTTPS** | No "URL changes" drama |
+| 🔁 **Stable & persistent** | Long-running tunnel for continuous bots |
+| ⚙️ **Auto-configured** | Python script reads tunnel URL & sets env vars automatically |
+| 🧘 **Set & forget** | Less mental overhead than ngrok |
+
+### 📥 1. Install Cloudflare Tunnel
+
+Download from: [developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/)
+
+Verify installation:
 ```bash
-docker run -it --rm \
-  --name n8n \
-  -p 5678:5678 \
-  -v ~/.n8n:/home/node/.n8n \
-  docker.n8n.io/n8nio/n8n
+cloudflared --version
 ```
 
-Then open `http://localhost:5678` → **Workflows** → **Import** → upload the `.json` file.
+### 🐍 2. Automatic Startup Script
 
-### Option 2: n8n.cloud (Managed) ☁️
+Create `start_n8n.py` (or use `RUN_CONFIG_AUTO.py`) in your project folder:
 
-1. Sign up at [n8n.cloud](https://n8n.cloud) (free tier available)
-2. Create a new workflow → **Import** → upload the `.json` file
-3. Configure credentials (Gemini, Telegram) in the UI
+```python
+import subprocess, re, os, time, threading
 
-### Option 3: Railway / Render 🚂
+def start_tunnel():
+    proc = subprocess.Popen(
+        ["cloudflared", "tunnel", "--url", "http://localhost:5678"],
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+    )
+    for line in proc.stdout:
+        match = re.search(r'https://[a-z0-9-]+\.trycloudflare\.com', line)
+        if match:
+            url = match.group(0)
+            os.environ["WEBHOOK_URL"] = url
+            os.environ["N8N_PROTOCOL"] = "https"
+            os.environ["N8N_HOST"] = url.replace("https://", "")
+            print(f"✅ Tunnel URL: {url}")
+            break
+    proc.wait()
 
-Deploy from GitHub in one click:
+threading.Thread(target=start_tunnel, daemon=True).start()
+time.sleep(5)
+os.system("n8n start")
+```
 
-| Platform | Link |
-|----------|------|
-| **Railway** | [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/n8n) |
-| **Render** | [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/n8n-io/n8n) |
+### 🚀 3. Run Everything
 
-### Post-Deployment Checklist ✅
+Open **PowerShell** and run:
+
+```powershell
+python start_n8n.py
+```
+
+The script automatically:
+1. ✅ Starts **Cloudflare Tunnel** → `cloudflared tunnel --url http://localhost:5678`
+2. ✅ Reads tunnel logs to extract the **public HTTPS URL**
+3. ✅ Sets environment variables: `WEBHOOK_URL`, `N8N_PROTOCOL`, `N8N_HOST`
+4. ✅ Starts **n8n** → `n8n start`
+5. ✅ Keeps everything running continuously
+
+### 🧪 4. Verify Active Workflow
+
+| Requirement | Status |
+|------------|--------|
+| PC ON | ✅ |
+| Internet ON | ✅ |
+| Python script running | ✅ |
+| Workflow ACTIVE in n8n | ✅ |
+
+> 💡 Once running, the webhook stays live indefinitely — no URL changes, no manual restarts. Your Telegram bots and production workflows keep running forever.
+
+### 📋 Post-Deployment Checklist
 
 1. 🔑 Add **Google PaLM API** credential (for Gemini)
 2. 🤖 Add **Telegram Bot** credential (from @BotFather)
-3. 🆔 Set **Chat ID** in Telegram nodes
+3. 🆔 Set **Chat ID** in both Telegram nodes
 4. 🔗 Copy the **Production URL** from Form Trigger
-5. 🚀 **Activate** the workflow
-
-> 💡 All AI model configurations and credentials are managed through the n8n UI — no code changes needed!
+5. 🚀 **Activate** the workflow (toggle to Active)
 
 ---
 
