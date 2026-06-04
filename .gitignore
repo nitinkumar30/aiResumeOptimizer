@@ -1,8 +1,0 @@
-# Assets that should be generated, not committed
-assets/*.png
-assets/*.jpg
-assets/*.mp4
-assets/*.gif
-
-# Keep SVG placeholders
-!assets/*.svg

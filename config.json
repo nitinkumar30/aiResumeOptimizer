@@ -1,6 +1,6 @@
 {
   "project": "AI Resume Optimizer",
-  "version": "2.0.0 (opencode branch)",
+  "version": "2.0.0",
   "description": "n8n workflow for ATS-optimized resume generation with multi-model AI support",
   "models": {
     "google_gemini": {
@@ -15,39 +15,13 @@
     },
     "openrouter": {
       "auto_routing": ["openrouter/auto"]
-    },
-    "image_generation": [
-      "google/gemini-2.5-flash-image",
-      "google/gemini-3.1-flash-image-preview",
-      "google/gemini-3-pro-image-preview",
-      "openai/gpt-5.4-image-2",
-      "openrouter/auto"
-    ],
-    "video_generation": [
-      "x-ai/grok-imagine-video",
-      "google/veo-3.1-fast",
-      "google/veo-3.1-lite",
-      "google/veo-3.1",
-      "bytedance/seedance-2.0-fast",
-      "openai/sora-2-pro"
-    ]
-  },
-  "providers": {
-    "credential_types": {
-      "google_palm_api": "Used for all Google Gemini models",
-      "openai_api": "Used for GPT, DALL-E, Sora models",
-      "openrouter_api": "Used for OpenRouter auto-routing",
-      "xai_api": "Used for xAI Grok Imagine Video",
-      "bytedance_api": "Used for ByteDance Seedance",
-      "groq_api": "Used for Groq fast fallback"
     }
   },
   "workflow": {
-    "total_nodes": 30,
+    "total_nodes": 19,
     "core_agents": ["Resume extractor", "JD extractor", "Generated resume unformatted", "ATS Score Agent", "Cover Letter Agent"],
-    "code_nodes": ["Prepare compilation ready", "Compile & convert to pdf file", "Build Caption + Cover Letter", "Build Media Prompts", "Media Gate (Check Form Input)"],
-    "media_nodes": ["Generate Image (OpenAI DALL-E 3)", "Generate Video (OpenAI Sora 2 Pro)", "Generate Video (Google Veo 3.1)", "Generate Video (xAI Grok Imagine)", "Generate Video (ByteDance Seedance 2.0)"],
-    "delivery": ["Send resume via telegram", "Send Cover Letter via Telegram", "Send Video via Telegram"]
+    "code_nodes": ["Prepare compilation ready", "Compile & convert to pdf file", "Build Caption + Cover Letter"],
+    "delivery": ["Send resume via telegram", "Send Cover Letter via Telegram"]
   },
   "features": {
     "ats_scoring": {
@@ -60,7 +34,6 @@
       ]
     },
     "cover_letter": {"enabled": true, "format": "HTML with inline CSS"},
-    "media_generation": {"enabled": true, "image": true, "video": true},
     "parallel_processing": {"resume_and_jd": true},
     "error_handling": {"retry_on_fail": true, "max_retries": 5}
   }

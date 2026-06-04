@@ -1,10 +1,6 @@
 # 🤖 AI Resume Optimizer — n8n Workflow 🚀
 
-> **Automatically parse your resume, analyze a job description, and generate a fully ATS-optimized, JD-tailored PDF resume** — powered by **Google Gemini**, **OpenAI GPT**, and delivered via **Telegram**. Zero manual effort. Zero cost to run. 💸
-
-<p align="center">
-  <img src="assets/hero-banner.svg" alt="AI Resume Optimizer Banner" width="800"/>
-</p>
+> **Automatically parse your resume, analyze a job description, and generate a fully ATS-optimized, JD-tailored PDF resume** — powered by **Google Gemini** + **OpenAI GPT**, and delivered via **Telegram**. Zero manual effort. Zero cost to run. 💸
 
 ---
 
@@ -13,13 +9,11 @@
 - [✨ Overview](#-overview)
 - [⚙️ How It Works](#️-how-it-works)
 - [🗺️ Workflow Architecture](#️-workflow-architecture)
-- [🎯 Demo Video](#-demo-video)
 - [🔩 Node-by-Node Breakdown](#-node-by-node-breakdown)
 - [🤖 Supported AI Models](#-supported-ai-models)
 - [📋 Prerequisites](#-prerequisites)
 - [🛠️ Setup & Configuration](#️-setup--configuration)
 - [🚀 Running the Workflow](#-running-the-workflow)
-- [🎨 Media Generation Pipeline](#-media-generation-pipeline)
 - [📊 ATS Scoring Engine](#-ats-scoring-engine)
 - [📝 Cover Letter Generator](#-cover-letter-generator)
 - [💡 Enhancement Ideas](#-enhancement-ideas)
@@ -45,7 +39,6 @@ This **n8n automation workflow** takes your existing resume (PDF or DOCX) and a 
 | 📬 **Telegram Delivery** | Delivers final PDF + Cover Letter directly to your chat | ✅ |
 | 📊 **ATS Scoring** | Scores your resume match % with gap analysis | ✅ |
 | 📝 **Cover Letter Gen** | Generates a tailored HTML cover letter | ✅ |
-| 🎨 **Media Generation** | Generates images & videos for portfolio enhancement | 🆕 |
 
 ### 🏆 Why This Workflow?
 
@@ -59,24 +52,32 @@ This **n8n automation workflow** takes your existing resume (PDF or DOCX) and a 
 
 ## ⚙️ How It Works
 
-```mermaid
-flowchart TD
-    A[👤 User submits Resume + JD] --> B[📂 Extract text from Resume]
-    B --> C[🧠 AI: Parse Resume → Structured JSON]
-    B --> D[🧠 AI: Parse Job Description → Structured JSON]
-    C --> E[🔀 Merge Node]
-    D --> E
-    E --> F[✍️ AI: Generate ATS-optimized LaTeX Resume]
-    E --> G[📊 ATS Score Agent]
-    E --> H[📝 Cover Letter Agent]
-    F --> I[🔧 Code: Clean & prepare LaTeX]
-    I --> J[🖨️ API: Compile LaTeX → PDF]
-    J --> K[📬 Telegram: Send PDF + Cover Letter]
-    G --> K
-    H --> K
+```
+User submits Resume + Job Description via Web Form
+           │
+           ▼
+   📂 Extract text from Resume (PDF/DOCX)
+           │
+           ▼
+   🧠 AI: Parse Resume → Structured JSON
+           │
+           ▼
+   🧠 AI: Parse Job Description → Structured JSON
+           │
+           ▼
+   ✍️  AI: Generate ATS-optimized LaTeX Resume
+           │
+           ▼
+   🔧 Code: Clean & prepare LaTeX for compilation
+           │
+           ▼
+   🖨️  API: Compile LaTeX → PDF (latex.ytotech.com)
+           │
+           ▼
+   📬 Telegram: Send PDF + Cover Letter + ATS Score
 ```
 
-### 📊 Visual Architecture
+### 🏗️ Visual Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -84,53 +85,40 @@ flowchart TD
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌──────────────┐    ┌────────────────┐    ┌────────────────┐   │
-│  │ Form Trigger  │───▶│ Extract File   │───▶│ Resume Parser  │   │
-│  │ (Web Form)    │    │ (PDF/DOCX)     │    │ (Gemini/GPT)   │   │
+│  │ 💻 Form       │───▶│ 📂 Extract     │───▶│ 🧠 Resume      │   │
+│  │ Trigger       │    │ From File      │    │ Extractor      │   │
 │  └──────────────┘    └────────────────┘    └───────┬────────┘   │
 │                                                     │           │
 │                                                     ▼           │
 │  ┌──────────────┐    ┌────────────────┐    ┌────────────────┐   │
-│  │ JD Parser     │◀───│  Wait/ Merge   │◀───│ Both JSONs     │   │
-│  │ (Gemini/GPT)  │    │                │    │ Ready          │   │
+│  │ 🧠 JD         │◀───│ 🔀 Merge/Wait  │◀───│ Both JSONs     │   │
+│  │ Extractor     │    │                │    │ Ready          │   │
 │  └───────┬───────┘    └────────────────┘    └───────┬────────┘   │
 │          │                                          │           │
 │          └──────────────────┬───────────────────────┘           │
 │                             ▼                                   │
 │              ┌─────────────────────────────┐                    │
-│              │    Three Parallel Agents:   │                    │
+│              │    Three Parallel Paths:    │                    │
 │              │  ┌───────────────────────┐  │                    │
-│              │  │ ① LaTeX Resume Gen   │  │                    │
-│              │  │ ② ATS Score Agent    │  │                    │
-│              │  │ ③ Cover Letter Agent│  │                    │
+│              │  │ ① ✍️ LaTeX Resume Gen│  │                    │
+│              │  │ ② 📊 ATS Score Agent │  │                    │
+│              │  │ ③ 📝 Cover Letter Gen│  │                    │
 │              │  └───────────────────────┘  │                    │
 │              └─────────────┬───────────────┘                    │
 │                            ▼                                    │
 │              ┌────────────────────────────┐                     │
-│              │    Compile PDF + Build     │                     │
-│              │    Caption + Cover Letter  │                     │
+│              │  🔧 Prepare Compilation   │                     │
+│              │  🖨️ Compile LaTeX → PDF   │                     │
+│              │  📬 Build Telegram Msg    │                     │
 │              └──────────────┬─────────────┘                     │
 │                             ▼                                   │
 │              ┌────────────────────────────┐                     │
 │              │   📬 Telegram Delivery     │                     │
-│              │   PDF + Cover Letter +     │                     │
-│              │   ATS Score Report         │                     │
+│              │   Resume PDF + Cover Letter│                     │
+│              │   + ATS Score Report       │                     │
 │              └────────────────────────────┘                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
-
----
-
-## 🎯 Demo Video
-
-> 🎬 **See it in action!**
-
-<p align="center">
-  <a href="assets/demo-video.mp4">
-    <img src="assets/demo-thumbnail.svg" alt="Demo Video Thumbnail" width="600"/>
-  </a>
-  <br/>
-  <em>Click the image above to watch the full walkthrough</em>
-</p>
 
 ---
 
@@ -148,14 +136,12 @@ A built-in n8n web form with two fields:
 ### 2️⃣ Extract from File
 Reads the uploaded resume binary and extracts plain text. Supports both PDF and DOCX formats via n8n's native `Extract From File` node.
 
-> ⚠️ **Gotcha:** If your resume is a scanned image-only PDF (no selectable text), extraction will return empty. Use a text-based PDF or OCR it first.
+> ⚠️ If your resume is a scanned image-only PDF (no selectable text), extraction will return empty. Use a text-based PDF or convert with OCR first.
 
 ---
 
 ### 3️⃣ Resume extractor — AI Agent
-**Supported Models:**
-- 🟢 **Google Gemini** (`gemini-2.0-flash-lite-001` → `gemini-2.5-flash-image`)
-- 🔵 **OpenAI GPT** (`gpt-5-mini` → `gpt-5.4-image-2`)
+**Model:** Google Gemini / OpenAI GPT
 
 Parses the extracted resume text into a detailed JSON object covering:
 - 👤 Candidate identity, contact, online presence
@@ -164,25 +150,32 @@ Parses the extracted resume text into a detailed JSON object covering:
 - 💼 Full work history with projects
 - 🎓 Education, certifications, achievements
 
-> 🛡️ Uses strict anti-hallucination rules — only returns what is explicitly in the document.
+**Logic:**
+- 🧩 Multi-role consolidation for career progression
+- 🗺️ Project-to-employer mapping by date alignment
+- 🔄 Two-column layout fragment reassembly
+- 📅 Date standardization (Sept '21 → September 2021)
+
+> 🛡️ Strict anti-hallucination rules — only returns what is explicitly in the document.
 
 ---
 
 ### 4️⃣ JD extractor — AI Agent
-**Supported Models:** Gemini / GPT
+**Model:** Google Gemini / OpenAI GPT
 
 Analyzes the raw job description text and extracts:
-- 🏷️ Domain classification & seniority level
+- 🏷️ Domain classification (15 categories)
 - ⭐ Must-have vs. good-to-have skills
-- 🔧 Technical & non-technical skills
-- 📋 Responsibilities (core, secondary, strategic, operational)
-- 📊 Priority keyword ranking (High / Medium / Low)
+- 📋 Responsibility mapping (Core / Secondary / Strategic / Operational)
+- 📊 Keyword priority ranking (High / Medium / Low)
 - 💡 Resume optimization suggestions
+
+> 🔍 **Detect-only** — no inference, no hallucination, no bias.
 
 ---
 
 ### 5️⃣ Generated resume unformatted — AI Agent
-**Supported Models:** Gemini / GPT
+**Model:** Google Gemini / OpenAI GPT
 
 This is the **core intelligence node** 🧠. It receives both JSON objects and fills a complete, locked LaTeX skeleton with:
 - ✅ Candidate's real content (no hallucination)
@@ -198,8 +191,8 @@ This is the **core intelligence node** 🧠. It receives both JSON objects and f
 ### 6️⃣ Prepare compilation ready — Code (JavaScript)
 Cleans the LLM output before sending to the compiler:
 - ✂️ Strips any markdown fences (`` ```latex ``) the LLM may have added
-- 🧹 Slices from `\documentclass` to `\end{document}`
-- 📛 Extracts candidate's name for the filename
+- 🧹 Slices from `\documentclass` to `\end{document}` — discards stray text
+- 📛 Extracts candidate's name from Resume JSON for the filename
 - 🧼 Sanitizes the name: `FirstName_LastName_Resume.pdf`
 - 🔒 `JSON.stringify`s the full request body for safe escaping
 
@@ -214,7 +207,8 @@ Cleans the LLM output before sending to the compiler:
 | Method | POST |
 | URL | `https://latex.ytotech.com/builds/sync` |
 | Content-Type | `application/json` |
-| Response | PDF binary saved as `pdfData` field |
+| Retry | ✅ 3 retries, 5s wait |
+| Response | PDF binary saved as `pdfData` |
 
 ---
 
@@ -226,45 +220,47 @@ Passes the binary PDF through untouched while attaching:
 ---
 
 ### 9️⃣ ATS Score Agent — AI Agent
-**Model:** Gemini / GPT  
+**Model:** Google Gemini / OpenAI GPT
 **Purpose:** Scores resume-to-JD match on a 0–100 scale
 
-**Scoring Breakdown:**
 | Factor | Weight |
 |--------|--------|
-| 🔑 Keyword coverage (high-priority JD keywords found) | 40% |
+| 🔑 Keyword coverage (high-priority JD keywords found in resume) | 40% |
 | 🎯 Skills alignment (must-have skills present) | 30% |
 | ⏳ Experience relevance (years + domain match) | 20% |
 | 🏷️ Role title alignment | 10% |
 
-> Output: `{ "score": 85, "recommendation": "Strong Match", "gaps": [...], "top_matching_keywords": [...] }`
+> Output: `{ "score": 85, "recommendation": "Strong Match", "gaps": [ ... ], "top_matching_keywords": [ ... ] }`
 
 ---
 
 ### 🔟 Cover Letter Agent — AI Agent
-**Model:** Gemini / GPT  
+**Model:** Google Gemini / OpenAI GPT
 **Purpose:** Writes a compelling, personalized HTML cover letter
 
-The cover letter includes:
-1. 🎣 Strong, specific opening hook
-2. ❓ Why this role & company specifically
-3. 🏆 2–3 strongest matching achievements (quantified)
-4. 📚 Addresses biggest skill gap as a learning narrative
-5. 🎬 Confident, action-oriented closing
+| Paragraph | Content | Purpose |
+|-----------|---------|---------|
+| 1️⃣ | Strong hook with company/role reference | Grab attention |
+| 2️⃣ | Why this role & company specifically | Show research |
+| 3️⃣ | 2–3 strongest matching achievements (quantified) | Prove capability |
+| 4️⃣ | Address biggest skill gap as learning narrative | Show growth mindset |
+| 5️⃣ | Confident, action-oriented closing | Drive response |
+
+> 🎨 Output is clean HTML with inline CSS — works in Gmail, Outlook, etc.
 
 ---
 
 ### 1️⃣1️⃣ Build Caption + Cover Letter — Code (JavaScript)
 Constructs the Telegram caption with:
-- 🟩 Visual score bar emoji (`🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜` for 80/100)
+- 🟩 Visual score bar (`🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜` for 80/100)
 - 📊 ATS match score & recommendation
 - 🔍 Top gap bullets
-- 📎 Cover letter HTML saved as `.html` file
+- 📎 Cover letter HTML saved as a `.html` file for the Telegram document
 
 ---
 
 ### 1️⃣2️⃣ Send resume via Telegram
-**Operation:** Send Document  
+**Operation:** Send Document
 Sends the compiled PDF with a caption like:
 ```
 🚀 Nitin Kumar — Resume Ready ✅
@@ -288,66 +284,38 @@ Sends the generated HTML cover letter alongside the resume — all in one go! �
 
 ## 🤖 Supported AI Models
 
-The workflow now supports **multiple AI providers** simultaneously. You can choose which model to use for each stage:
+The workflow supports **two AI providers** with fallback capability:
 
-### 🟢 Google Gemini Models
+### 🟢 Google Gemini Family
 
-| Model ID | Use Case | Speed | Quality |
-|----------|----------|-------|---------|
-| `models/gemini-2.0-flash-lite-001` | Resume/JD Parsing | ⚡⚡⚡ | ✅ |
-| `models/gemini-2.5-flash-image` | Resume/JD Parsing + Image Gen | ⚡⚡⚡ | ✅✅ |
-| `models/gemini-3.1-flash-image-preview` | LaTeX Generation + Image | ⚡⚡ | ✅✅✅ |
-| `models/gemini-3-pro-image-preview` | ATS Scoring, Cover Letter | ⚡ | ✅✅✅✅ |
+| Model ID | Speed | Quality | Best For |
+|----------|-------|---------|----------|
+| `models/gemini-2.0-flash-lite-001` | ⚡⚡⚡ | ✅ | Resume/JD Parsing (fast) |
+| `models/gemini-2.5-flash-image` | ⚡⚡⚡ | ✅✅ | Parsing + Reasoning |
+| `models/gemini-3.1-flash-image-preview` | ⚡⚡ | ✅✅✅ | LaTeX Generation |
+| `models/gemini-3-pro-image-preview` | ⚡ | ✅✅✅✅ | ATS Scoring, Cover Letter |
 
-### 🔵 OpenAI Models
+### 🔵 OpenAI Family
 
-| Model ID | Use Case | Speed | Quality |
-|----------|----------|-------|---------|
-| `gpt-5-mini` | Fast parsing tasks | ⚡⚡⚡ | ✅ |
-| `gpt-5.4-image-2` | Advanced generation + Images | ⚡⚡ | ✅✅✅ |
+| Model ID | Speed | Quality | Best For |
+|----------|-------|---------|----------|
+| `gpt-5-mini` | ⚡⚡⚡ | ✅ | Fast parsing tasks |
+| `gpt-5.4-image-2` | ⚡⚡ | ✅✅✅ | Advanced gen + reasoning |
 
-### 🔀 OpenRouter
-
-| Model ID | Use Case |
-|----------|----------|
-| `openrouter/auto` | Auto-routes to best available model |
-
-### 🎬 Video Generation Models
-
-| Model ID | Provider | Use Case |
-|----------|----------|----------|
-| `x-ai/grok-imagine-video` | xAI | Short portfolio video clips |
-| `google/veo-3.1-fast` | Google | Fast video generation |
-| `google/veo-3.1-lite` | Google | Lightweight video gen |
-| `google/veo-3.1` | Google | Full quality video |
-| `bytedance/seedance-2.0-fast` | ByteDance | Efficient video gen |
-| `openai/sora-2-pro` | OpenAI | Professional video gen |
-
-### 🖼️ Image Generation Models
-
-| Model ID | Provider | Use Case |
-|----------|----------|----------|
-| `google/gemini-2.5-flash-image` | Google | Portfolio images |
-| `google/gemini-3.1-flash-image-preview` | Google | Hero images, banners |
-| `google/gemini-3-pro-image-preview` | Google | High-quality visuals |
-| `openai/gpt-5.4-image-2` | OpenAI | Professional graphics |
-| `openrouter/auto` | OpenRouter | Auto best model routing |
+> 💡 Models listed in `config.json` for reference. You can switch models by updating the node parameters in n8n.
 
 ---
 
 ## 📋 Prerequisites
 
-Before importing and running this workflow, make sure you have:
-
 | # | Requirement | Details |
 |---|-------------|---------|
 | 1️⃣ | **n8n installed** (self-hosted) | v2.14 or higher recommended |
 | 2️⃣ | **Google Gemini API key** 🆓 | [Get one here](https://aistudio.google.com/app/apikey) |
-| 3️⃣ | **OpenAI API key** (optional) | For GPT models |
+| 3️⃣ | **OpenAI API key** (optional) | For GPT model fallback |
 | 4️⃣ | **Telegram Bot** 🤖 | Created via [@BotFather](https://t.me/BotFather) |
 | 5️⃣ | **Telegram Chat ID** | Your personal/group chat ID |
 | 6️⃣ | **Internet access** 🌐 | To `latex.ytotech.com` & AI APIs |
-| 7️⃣ | **Image/Video API keys** (optional) | For media generation pipeline |
 
 ---
 
@@ -360,19 +328,15 @@ Before importing and running this workflow, make sure you have:
 3. Upload the `OptimizeResumeAsPerJD — Enhanced.json` file
 4. The workflow will appear with all nodes pre-configured
 
-### Step 2 — Configure AI Credentials 🔑
+### Step 2 — Configure Google Gemini Credential 🔑
 
-#### Google Gemini
-1. Settings → Credentials → Add Credential
-2. Search: **Google PaLM API**
+1. In n8n, go to **Settings** → **Credentials** → **Add Credential**
+2. Search for **Google PaLM API** (used for Gemini)
 3. Paste your Gemini API key
-4. Name: `Google Gemini - Resume Optimizer`
-5. Assign to all Gemini nodes
+4. Name it like `Google Gemini - Resume Optimizer`
+5. In the workflow, assign this credential to all Gemini Chat Model nodes
 
-#### OpenAI (Optional)
-1. Add **OpenAI API** credential
-2. Paste your OpenAI API key
-3. Assign to GPT nodes
+> 💡 You can use the same credential for all nodes.
 
 ### Step 3 — Configure Telegram 📬
 
@@ -381,7 +345,7 @@ Before importing and running this workflow, make sure you have:
 2. Send `/newbot` and follow the prompts
 3. Copy the **Bot Token** you receive
 
-#### 3b — Add Telegram Credential
+#### 3b — Add Telegram Credential in n8n
 1. Go to **Credentials** → **Add** → search **Telegram**
 2. Paste your Bot Token → Save
 
@@ -393,7 +357,9 @@ Before importing and running this workflow, make sure you have:
 5. For a **group**, the ID will be a negative number like `-5273070660`
 
 #### 3d — Update Telegram Nodes
-- Set **Chat ID** in both Telegram nodes (`Send resume via telegram` & `Send Cover Letter via Telegram`)
+1. Click both `Send resume via telegram` and `Send Cover Letter via Telegram`
+2. Set your **Chat ID** in the field
+3. Assign your Telegram credential
 
 ### Step 4 — Activate the Workflow ✅
 
@@ -410,80 +376,43 @@ Before importing and running this workflow, make sure you have:
 # 2. Upload your resume (.pdf or .docx) 📎
 # 3. Paste the full job description 📝
 # 4. Click "Send ✅"
-# 5. Wait ~60-90 seconds (3-5 AI calls + compilation) ⏳
+# 5. Wait ~60-90 seconds (3 AI calls + compilation) ⏳
 # 6. Check Telegram — optimized PDF + Cover Letter + Score! 🎉
 ```
 
 > 📱 **Pro Tip:** The form works on mobile too — share the URL with friends to generate their resumes!
 
 ### What You Get in Telegram:
+
 | Item | Format | Description |
 |------|--------|-------------|
-| ✅ ATS-Optimized Resume | PDF | Tailored to the JD |
-| 📝 Cover Letter | HTML | Professional & personalized |
-| 📊 ATS Score Report | In caption | Score + gaps to address |
-
----
-
-## 🎨 Media Generation Pipeline
-
-> 🆕 **New!** Generate portfolio images & videos alongside your resume using cutting-edge AI models.
-
-### Image Generation Workflow
-```mermaid
-flowchart LR
-    A[Resume JSON] --> B[🎨 Image Prompt Builder]
-    B --> C[🤖 Gemini 2.5 Flash Image]
-    B --> D[🤖 GPT 5.4 Image-2]
-    C --> E[🖼️ Portfolio Hero Image]
-    D --> E
-```
-
-### Video Generation Workflow
-```mermaid
-flowchart LR
-    A[Resume JSON] --> B[🎬 Video Script Builder]
-    B --> C[🤖 Veo 3.1 / Sora 2 Pro]
-    B --> D[🤖 Grok Imagine Video]
-    C --> E[📹 Portfolio Showcase Video]
-    D --> E
-```
-
-### Best Model Selection Guide
-
-| Task | Recommended Model | Why |
-|------|-------------------|-----|
-| 🖼️ Resume Header Image | `google/gemini-2.5-flash-image` | Fast, good quality |
-| 🖼️ Hero Banner | `google/gemini-3-pro-image-preview` | Highest quality |
-| 🖼️ Skill Icons | `openai/gpt-5.4-image-2` | Professional look |
-| 🎬 Short Clip (15s) | `x-ai/grok-imagine-video` | Quick generation |
-| 🎬 Portfolio Video | `google/veo-3.1` | Best quality |
-| 🎬 Professional Showcase | `openai/sora-2-pro` | Studio quality |
-| 🎬 Fast Preview | `bytedance/seedance-2.0-fast` | Speed optimized |
+| ✅ **ATS-Optimized Resume** | PDF | Tailored to the JD with ATS keywords |
+| 📝 **Cover Letter** | HTML | Professional & personalized |
+| 📊 **ATS Score Report** | In caption | Score + gaps to address |
 
 ---
 
 ## 📊 ATS Scoring Engine
 
-The ATS Score Agent uses a sophisticated 4-factor scoring model:
+The ATS Score Agent uses a **4-factor weighted scoring model**:
 
-### 🔢 Scoring Formula
+### 🔢 Formula
 ```
-ATS Score = (Keyword Coverage × 0.40) + (Skills Alignment × 0.30) 
+ATS Score = (Keyword Coverage × 0.40) + (Skills Alignment × 0.30)
           + (Experience Relevance × 0.20) + (Role Title Match × 0.10)
 ```
 
 ### 📈 Score Interpretation
 
-| Score Range | Recommendation | Emoji |
-|-------------|---------------|-------|
+| Score Range | Recommendation | Visual |
+|-------------|---------------|--------|
 | 80–100 | 🚀 Strong Match | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |
 | 60–79 | ✅ Good Match | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ |
 | 40–59 | ⚠️ Moderate Match | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ |
 | 0–39 | 🔴 Weak Match | 🟩🟩🟩🟩⬜⬜⬜⬜⬜⬜ |
 
 ### 🎯 Gap Analysis
-The engine identifies exactly **3 targeted gaps** — specific, actionable improvements for your resume.
+The engine identifies exactly **3 targeted, actionable gaps** — specific improvements for your resume.
 
 ---
 
@@ -491,60 +420,45 @@ The engine identifies exactly **3 targeted gaps** — specific, actionable impro
 
 The Cover Letter Agent writes **5-paragraph HTML cover letters** designed for email delivery:
 
-| Paragraph | Content | Purpose |
-|-----------|---------|---------|
-| 1️⃣ | Strong hook with company/role reference | Grab attention |
-| 2️⃣ | Why this role & company | Show research |
-| 3️⃣ | 2–3 quantified achievements | Prove capability |
-| 4️⃣ | Address skill gaps as learning narrative | Show growth mindset |
-| 5️⃣ | Confident, action-oriented closing | Drive response |
+- 🎣 **Hook** — Strong opening referencing the company & role
+- ❓ **Why This Role** — Show research & genuine interest
+- 🏆 **Key Achievements** — 2-3 quantified wins from the resume
+- 📚 **Addressing Gaps** — Skill gap turned into a learning narrative
+- 🎬 **Closing CTA** — Confident, action-oriented ending
 
-> 🎨 Output is clean HTML with inline CSS — works perfectly in Gmail, Outlook, and all major email clients.
+> No clichés, no placeholders, no hallucinations — just real, compelling content.
 
 ---
 
 ## 💡 Enhancement Ideas
 
-### ✅ Already Implemented
-- [x] 🎨 **Image & Video Generation** — Portfolio media from resume data
-- [x] 🤖 **Multi-Model Support** — Gemini + GPT + OpenRouter + Veo + Sora
-- [x] 📊 **ATS Scoring** — Comprehensive match analysis
-- [x] 📝 **Cover Letter Generator** — Personalized HTML cover letters
-- [x] 🔄 **Retry on Fail** — Resilient HTTP calls
+These improvements can be added on top of the current working flow:
 
-### 🚀 Future Enhancements
+### 📧 Email Delivery (Gmail)
+Add a **Gmail node** after `Compile & convert to pdf file` to send the PDF + Cover Letter as an email attachment. Great for sharing with recruiters directly.
 
-#### 📧 Email Delivery (Gmail)
-Add a **Gmail node** to send the PDF + Cover Letter as an email attachment. Perfect for direct recruiter outreach!
-
-#### ⚡ Parallel AI Processing
+### ⚡ Parallel AI Processing
 Wire `Resume extractor` and `JD extractor` directly from `Extract from File` to run **in parallel** — cuts processing time by ~40%!
 
-#### 📨 Instant Acknowledgement
+### 📨 Instant Acknowledgement
 Add a Telegram/Gmail node right after the Form Trigger to send: *"✅ We've received your resume. Your optimized version will arrive in ~90 seconds."*
 
-#### 🔔 Error Alert System
+### 🔔 Error Alert via Telegram
 Add an **Error Trigger** workflow that sends you a Telegram message with full error details when any node fails.
 
-#### 📊 Google Sheets Logging
+### 📊 Google Sheets Logging
 Add a **Google Sheets node** to log: candidate name, JD domain, ATS score, timestamp — for usage tracking.
 
-#### 🌐 Multi-language Support
-Detect resume language & generate the optimized resume in the candidate's preferred language.
+### 🌐 Multi-language Support
+Detect resume language and generate the optimized resume in the candidate's preferred language.
 
-#### 🧪 A/B Testing Mode
+### 🧪 A/B Testing Mode
 Generate 2 resume versions with different keyword strategies and let you pick the best ATS score.
 
-#### 🏢 Company Research Agent
+### 🏢 Company Research Agent
 Add a web search node that researches the company before generating — produces even more tailored content.
 
-#### 📱 WhatsApp Delivery
-Add WhatsApp Business API support as an alternative delivery channel.
-
-#### 🔗 Direct Apply Integration
-Connect to LinkedIn Easy Apply, Indeed, or other job platforms for one-click submission.
-
-#### 💾 Version History
+### 💾 Version History
 Store all generated resumes with version tracking — compare & revert anytime.
 
 ---
@@ -554,42 +468,26 @@ Store all generated resumes with version tracking — compare & revert anytime.
 | Error | Likely Cause | Fix |
 |-------|-------------|-----|
 | `Missing \begin{document}` | LLM wrapped output in markdown fences | ✅ Auto-fixed by `Prepare compilation ready` node |
-| `MISSING_COMPILATION_SPECIFICATION` | Double `==` in HTTP body expression | Use single `=` expression: `={{ $json.requestBody }}` |
+| `MISSING_COMPILATION_SPECIFICATION` | Double `==` in HTTP body expression | Use single `=`: `={{ $json.requestBody }}` |
 | `XeTeXglyph` error | `fontawesome5` package used | Remove `\usepackage{fontawesome5}` from LaTeX skeleton |
-| `join not defined` | Old template+data architecture | Ensure LaTeX goes directly to compiler, no split |
-| Empty PDF / blank resume | Scanned image PDF | Convert to text-based PDF first, or use DOCX |
+| Empty PDF / blank resume | Scanned image PDF | Convert to text-based PDF first, or use DOCX format |
 | Telegram bot not sending | Bot not added to group | Add bot to group and make it admin |
-| Gemini API errors ⚠️ | Rate limit on free tier | Add **Wait** node (5s) between AI agents |
-| Image generation fails | API key missing for model | Set correct API key in credential config |
-| Video too long | Model context limit exceeded | Reduce video prompt to under 200 tokens |
+| Gemini API errors | Rate limit on free tier | Add a **Wait** node (5s) between AI agents |
 
 ---
 
 ## 🧠 How the AI Optimization Works
 
-The workflow uses a **three-stage intelligence pipeline** — each stage powered by the best model for the job:
+The workflow uses a **three-stage intelligence pipeline**:
 
-### 🎯 Stage 1 — Resume Intelligence
-The resume extractor doesn't just copy-paste text. It:
-- 🔗 Consolidates multi-role employment histories
-- 🗺️ Maps projects to employers by date
-- 🔄 Reassembles fragmented two-column layouts
-- 📅 Standardizes all date formats
+### Stage 1 — Resume Intelligence 🎯
+The resume extractor doesn't just copy-paste text. It consolidates multi-role employment histories, maps projects to employers by date, reassembles fragmented two-column layouts, and standardizes all date formats — all with strict anti-hallucination rules.
 
-### 🎯 Stage 2 — JD Intelligence
-The JD extractor runs a strict **detect-only analysis**:
-- 🔍 Identifies high-priority keywords ("Required"/"Must")
-- 🏷️ Classifies the domain
-- 📋 Maps responsibility types
-- 🧭 Generates a placement strategy — telling the next stage exactly where each skill goes
+### Stage 2 — JD Intelligence 🎯
+The JD extractor runs a **detect-only analysis**. It identifies high-priority keywords (marked "Required"/"Must"), classifies the domain, maps responsibility types, and generates a placement strategy — telling the next stage exactly which skills go in which resume section.
 
-### 🎯 Stage 3 — ATS-Optimized Generation
-Armed with both structured JSONs, the LaTeX generator:
-- ✍️ Rewrites experience bullets with action verbs
-- 🎯 Injects JD keywords at the right density
-- 📊 Reorders skills by JD priority
-- 🖨️ Outputs clean, compilable LaTeX
-- 🛡️ No hallucination, no invented facts
+### Stage 3 — ATS-Optimized Generation 🎯
+Armed with both structured JSONs, the LaTeX generator rewrites experience bullets with action verbs, injects JD keywords at the right density, reorders skills by JD priority, and outputs clean, compilable LaTeX — no hallucination, no invented facts.
 
 ---
 
@@ -605,15 +503,11 @@ This workflow is **free to use, modify, and share**. If you build something cool
 
 ## 👤 Author
 
-<p align="center">
-  <strong>Nitin Kumar</strong><br/>
-  <a href="https://www.linkedin.com/in/nitinkumar">
-    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
-  </a>
-  <a href="https://github.com/nitinkumar30">
-    <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
-  </a>
-</p>
+**Nitin Kumar**
+🔗 [LinkedIn](https://www.linkedin.com/in/nitinkumar)
+🔗 [GitHub](https://github.com/nitinkumar30)
+
+> Built with ☕, too many LaTeX error logs, and the firm belief that your resume should work as hard as you do.
 
 ---
 
@@ -622,6 +516,5 @@ This workflow is **free to use, modify, and share**. If you build something cool
   <img src="https://img.shields.io/badge/AI-Google%20Gemini%20%7C%20OpenAI%20GPT-green?style=flat-square"/>
   <img src="https://img.shields.io/badge/PDF-LaTeX-red?style=flat-square"/>
   <img src="https://img.shields.io/badge/Delivery-Telegram-blue?style=flat-square"/>
-  <img src="https://img.shields.io/badge/Media-Veo%20%7C%20Sora%20%7C%20Grok-purple?style=flat-square"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square"/>
 </p>

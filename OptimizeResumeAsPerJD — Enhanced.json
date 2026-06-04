@@ -1,9 +1,9 @@
 {
-  "name": "OptimizeResumeAsPerJD — Enhanced (Multi-Model + Media Gen)",
+  "name": "OptimizeResumeAsPerJD — Enhanced",
   "nodes": [
     {
       "parameters": {
-        "formTitle": "🚀 Generate JD Synced Resume + Media",
+        "formTitle": "Generate JD Synced Resume",
         "formFields": {
           "values": [
             {
@@ -17,61 +17,35 @@
               "fieldType": "textarea",
               "placeholder": "Input full Job Description here",
               "requiredField": true
-            },
-            {
-              "fieldLabel": "Generate Portfolio Media? 🎨",
-              "fieldType": "select",
-              "fieldOptions": {
-                "values": [
-                  { "name": "Yes — Images & Video", "value": "all" },
-                  { "name": "Images Only", "value": "images" },
-                  { "name": "No Media", "value": "none" }
-                ]
-              },
-              "defaultValue": "none"
-            },
-            {
-              "fieldLabel": "Preferred AI Model 🤖",
-              "fieldType": "select",
-              "fieldOptions": {
-                "values": [
-                  { "name": "Auto (Best Available)", "value": "auto" },
-                  { "name": "Google Gemini 2.5 Flash", "value": "gemini-2.5-flash-image" },
-                  { "name": "Google Gemini 3 Pro", "value": "gemini-3-pro-image-preview" },
-                  { "name": "OpenAI GPT 5.4", "value": "gpt-5.4-image-2" },
-                  { "name": "OpenRouter Auto", "value": "openrouter/auto" }
-                ]
-              },
-              "defaultValue": "auto"
             }
           ]
         },
         "options": {
-          "buttonLabel": "Generate Resume ✅",
+          "buttonLabel": "Send ✅",
           "respondWithOptions": {
             "values": {
-              "formSubmittedText": "✅ Resume generation started! Check Telegram in ~60-90 seconds."
+              "formSubmittedText": "Your response has been recorded successfully."
             }
           }
         }
       },
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2.5,
-      "position": [-880, 148],
+      "position": [-800, 148],
       "id": "de512db8-fc72-4c11-b898-dbeb71ed4988",
       "name": "Resume & JD submitted",
       "webhookId": "c14ca530-db15-493d-a9f8-dda8afdac38a"
     },
     {
       "parameters": {
-        "modelName": "models/gemini-2.5-flash-image",
+        "modelName": "models/gemini-2.0-flash-lite-001",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
-      "position": [-424, 468],
+      "position": [-344, 372],
       "id": "4a6e1047-f719-4540-a782-1b058a765ec8",
-      "name": "Google Gemini 2.5 Flash Image",
+      "name": "Google Gemini Chat Model2",
       "credentials": {
         "googlePalmApi": {
           "id": "7BlIJ4WsT7tfELQL",
@@ -81,14 +55,14 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-3.1-flash-image-preview",
+        "modelName": "models/gemini-2.0-flash-lite-001",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
-      "position": [-72, 468],
-      "id": "gemini-3-1-flash-node",
-      "name": "Google Gemini 3.1 Flash Image",
+      "position": [8, 372],
+      "id": "357af32b-4f53-4597-91b5-ab11a5caf8e2",
+      "name": "Google Gemini Chat Model3",
       "credentials": {
         "googlePalmApi": {
           "id": "w2p3633yF66TV5TQ",
@@ -98,75 +72,31 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-3-pro-image-preview",
+        "modelName": "models/gemini-2.0-flash-lite-001",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
-      "position": [504, 468],
-      "id": "gemini-3-pro-node",
-      "name": "Google Gemini 3 Pro Image",
+      "position": [584, 372],
+      "id": "c127dde7-5742-4b06-a62f-abe2ed2ddb1b",
+      "name": "Google Gemini Chat Model4",
       "credentials": {
         "googlePalmApi": {
-          "id": "c127dde7-5742-4b06-a62f-abe2ed2ddb1b",
+          "id": "wZStfV8eX8FmFvBm",
           "name": "Google Gemini(PaLM) customResume_3"
         }
       }
     },
     {
       "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "list",
-          "value": "gpt-5.4-image-2"
-        },
-        "builtInTools": {},
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
-      "position": [-200, 660],
-      "id": "openai-gpt54-node",
-      "name": "OpenAI GPT 5.4 Image-2",
-      "credentials": {
-        "openAiApi": {
-          "id": "KxTIboD2Q42EFry6",
-          "name": "OpenAI API 1"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "list",
-          "value": "openrouter/auto"
-        },
-        "builtInTools": {},
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
-      "position": [120, 660],
-      "id": "openrouter-auto-node",
-      "name": "OpenRouter Auto",
-      "credentials": {
-        "openAiApi": {
-          "id": "openrouter-cred",
-          "name": "OpenRouter API"
-        }
-      }
-    },
-    {
-      "parameters": {
         "promptType": "define",
-        "text": "=Role: High-Precision Document Intelligence Engine.\n**Task:** Locate the uploaded document in the current context, parse its full content, and convert it into a detailed JSON object.\n\n---\n\n### 🧠 EXTRACTION LOGIC\n1. Multi-Role Consolidation: Create distinct entries for every sequential role at the same employer.\n2. Project-to-Employer Mapping: Nest projects under correct work experience entries.\n3. Fragment Reassembly: Reconnect floating dates/locations to nearest relevant header.\n4. Date Standardization: Convert shorthand dates to full \"Month YYYY\" format.\n\n---\n\n### 🚨 DATA INTEGRITY RULES\n- No Hallucination: Use ONLY the exact strings found in the text.\n- Dynamic Skill Matrix: Group keywords by category.\n- Null Safety: Return [] or null for missing fields.\n\n---\n\n### 📌 OUTPUT JSON SCHEMA\n{\n  \"candidate_identity\": {\n    \"full_name\": \"\",\n    \"contact\": { \"email\": \"\", \"phone\": \"\", \"location\": \"\" },\n    \"online_presence\": { \"linkedin\": \"\", \"github\": \"\", \"portfolio\": \"\" }\n  },\n  \"professional_summary\": { \"text\": \"\", \"years_of_experience\": \"\", \"key_strengths\": [] },\n  \"skill_matrix\": {\n    \"technical_skills\": { \"category_name\": [\"skill1\", \"skill2\"] },\n    \"soft_skills\": [],\n    \"languages\": [],\n    \"certifications\": []\n  },\n  \"work_history\": [\n    {\n      \"employer\": \"\", \"location\": \"\", \"roles\": [\n        { \"title\": \"\", \"start_date\": \"\", \"end_date\": \"\", \"bullets\": [], \"projects\": [] }\n      ]\n    }\n  ],\n  \"education\": [],\n  \"achievements\": []\n}",
+        "text": "=Role: High-Precision Document Intelligence Engine.\n**Task:** Locate the uploaded document in the current context, parse its full content, and convert it into a detailed JSON object. You must ignore all internal training data and common placeholders (e.g., \"Nitin Singh\") to prevent hallucination.\n\n---\n\n### **🧠 EXTRACTION LOGIC (Layout Agnostic)**\n1.  **Multi-Role Consolidation:** If the candidate lists a single employer with multiple sequential roles (e.g., Programmer → Assistant System Engineer → System Engineer), you MUST create a distinct entry for every role to preserve the career progression.\n2.  **Project-to-Employer Mapping:** Identify specific \"Projects\" and logically nest them within the corresponding work experience entry based on date alignment and descriptive context[cite: 3].\n3.  **Fragment Reassembly:** For documents with two-column layouts, logically reconnect floating dates, locations, or bullet points to their nearest relevant header based on visual proximity in the text stream.\n4.  **Date Standardization:** Convert all shorthand months and years (e.g., \"Sept '21\") into full \"Month YYYY\" format (e.g., \"September 2021\")[cite: 5].\n\n---\n\n### **🚨 DATA INTEGRITY RULES**\n*   **Direct Content Access:** You are receiving a file. Read the actual binary/text content of the attachment. Do not rely on the filename for data.\n*   **No Hallucination:** Use ONLY the exact strings found in the text. Do not invent details or use generic placeholders.\n*   **Dynamic Skill Matrix:** Group technical keywords into categories such as \"Automation,\" \"Programming,\" \"API Testing,\" and \"AI/ML Tools\".\n*   **Null Safety:** If a specific field is not present in the text, return an empty array `[]` or `null`.\n\n---\n\n### **📌 OUTPUT JSON SCHEMA**\n```json\n{\n  \"candidate_identity\": {\n    \"full_name\": \"\",\n    \"contact\": { \"email\": \"\", \"phone\": \"\", \"location\": \"\" },\n    \"online_presence\": { \"linkedin\": \"\", \"github\": \"\", \"portfolio\": \"\" }\n  },\n  \"professional_summary\": { \"text\": \"\", \"years_of_experience\": \"\", \"key_strengths\": [] },\n  \"skill_matrix\": {\n    \"technical_skills\": { \"category_name\": [\"skill1\", \"skill2\"] },\n    \"soft_skills\": [],\n    \"languages\": [],\n    \"certifications\": []\n  },\n  \"work_history\": [\n    {\n      \"employer\": \"\", \"location\": \"\", \"roles\": [\n        { \"title\": \"\", \"start_date\": \"\", \"end_date\": \"\", \"bullets\": [], \"projects\": [] }\n      ]\n    }\n  ],\n  \"education\": [],\n  \"achievements\": []\n}```",
         "needsFallback": true,
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
-      "position": [-432, 148],
+      "position": [-352, 148],
       "id": "0a9d8857-e15b-4321-9679-21c513b455e0",
       "name": "Resume extractor",
       "retryOnFail": true,
@@ -175,13 +105,13 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a STRICT Talent Intelligence System and Job Description Structuring Model.\n\nINPUT:\n{{ $('Resume & JD submitted').item.json['Job Description 📋'] }}\n\n---\n\n# 🚨 NON-NEGOTIABLE RULES\n- DO NOT hallucinate or infer missing information\n- DETECT-ONLY system, not a GENERATION system\n\n---\n\n# 🧠 STEP 1 — TEXT UNDERSTANDING\nRead the JD and ONLY identify explicitly mentioned: Skills, Tools, Responsibilities, Requirements, Experience, Role expectations.\n\n---\n\n# 🧠 STEP 2 — DOMAIN CLASSIFICATION\nClassify into ONLY ONE: Software Engineering / IT, Data / AI / Analytics, DevOps / Cloud, QA / Testing, Product / Project Management, Marketing / Digital Marketing, Sales / Business Development, HR / Recruitment, Finance / Accounting, Operations / Supply Chain, Customer Support, Healthcare / Medical, Education / Training, Hybrid.\n\n---\n\n# 🧠 STEP 3 — ROLE INTENT\nExtract: Job purpose, Core responsibilities theme, Seniority level (Junior/Mid/Senior/Lead/Executive), Industry context.\n\n---\n\n# 🧠 STEP 4 — SKILL EXTRACTION\n| Category | Must-Have | Good-to-Have |\n| Technical | | |\n| Non-Technical | | |\n\n# 🧠 STEP 5 — RESPONSIBILITY MAPPING\nCategorize into: Core, Secondary, Strategic, Operational.\n\n# 🧠 STEP 6 — KEYWORD PRIORITY RANKING\nHigh (Required/Must/Expert), Medium (Preferred/Experience with), Low (Mentioned once/nice-to-have).\n\n# 🧠 STEP 7 — RESUME OPTIMIZATION\nOutput suggestions for tailoring resume to this JD.\n\n---\n\n### 📌 OUTPUT JSON\n{\n  \"domain\": \"\",\n  \"seniority_level\": \"\",\n  \"role_title\": \"\",\n  \"company\": \"\",\n  \"job_purpose\": \"\",\n  \"skills\": {\n    \"must_have\": { \"technical\": [], \"non_technical\": [] },\n    \"good_to_have\": { \"technical\": [], \"non_technical\": [] }\n  },\n  \"responsibilities\": { \"core\": [], \"secondary\": [], \"strategic\": [], \"operational\": [] },\n  \"keyword_priority\": { \"high\": [], \"medium\": [], \"low\": [] },\n  \"optimization_suggestions\": []\n}",
+        "text": "=You are a STRICT Talent Intelligence System, ATS Parsing Engine, and Job Description Structuring Model.\n\nYour ONLY task is to extract structured intelligence from the provided Job Description.\n\nINPUT:\n{{ $('Resume & JD submitted').item.json['Job Description 📋'] }}\n\n---\n\n# 🚨 ABSOLUTE NON-NEGOTIABLE RULES\n\n- DO NOT hallucinate or infer missing information\n- DO NOT add external knowledge or industry assumptions\n- DO NOT assume responsibilities, tools, or skills not explicitly present\n- DO NOT bias toward any domain (tech or non-tech)\n- DO NOT merge unrelated concepts\n- DO NOT paraphrase beyond normalization rules\n- If data is missing → return \"\" or []\n\n---\n\n# 🧠 STEP 1 — TEXT UNDERSTANDING (NO INFERENCE)\n\nRead the JD and ONLY identify explicitly mentioned:\n- Skills, Tools, Responsibilities, Requirements, Experience, Role expectations\n\n---\n\n# 🧠 STEP 2 — DOMAIN CLASSIFICATION (STRICT)\n\nAllowed domains:\n- Software Engineering / IT | Data / AI / Analytics | DevOps / Cloud\n- QA / Testing | Product / Project Management | Marketing / Digital Marketing\n- Sales / Business Development | HR / Recruitment | Finance / Accounting\n- Operations / Supply Chain | Customer Support | Healthcare / Medical\n- Education / Training | Hybrid\n\n---\n\n# 🧠 STEP 3 — ROLE INTENT EXTRACTION\n\n- Job purpose, Core responsibilities theme, Seniority level, Industry context\n\n---\n\n# 🧠 STEP 4 — SKILL EXTRACTION (STRICT CATEGORIZATION)\n\n| Category | Must-Have | Good-to-Have |\n| Technical | | |\n| Non-Technical | | |\n\n---\n\n# 🧠 STEP 5 — RESPONSIBILITY MAPPING\n\nCategorize responsibilities into: Core, Secondary, Strategic, Operational\n\n---\n\n# 🧠 STEP 6 — KEYWORD PRIORITY RANKING\n\n| Priority | Criteria |\n| High | Required / Must-have / Expert-level |\n| Medium | Preferred / Experience with |\n| Low | Mentioned once / Nice-to-have |\n\n---\n\n# 🧠 STEP 7 — RESUME OPTIMIZATION SUGGESTIONS\n\nOutput specific, actionable suggestions for tailoring the resume to this JD.\n\n---\n\n### 📌 OUTPUT JSON SCHEMA\n```json\n{\n  \"domain\": \"\",\n  \"seniority_level\": \"\",\n  \"role_title\": \"\",\n  \"company\": \"\",\n  \"job_purpose\": \"\",\n  \"skills\": {\n    \"must_have\": { \"technical\": [], \"non_technical\": [] },\n    \"good_to_have\": { \"technical\": [], \"non_technical\": [] }\n  },\n  \"responsibilities\": {\n    \"core\": [],\n    \"secondary\": [],\n    \"strategic\": [],\n    \"operational\": []\n  },\n  \"keyword_priority\": {\n    \"high\": [{\"keyword\": \"\", \"context\": \"\"}],\n    \"medium\": [],\n    \"low\": []\n  },\n  \"optimization_suggestions\": []\n}```",
         "needsFallback": true,
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
-      "position": [-80, 148],
+      "position": [0, 148],
       "id": "07385834-a1f0-45fc-a8af-416d464fc728",
       "name": "JD extractor",
       "retryOnFail": true,
@@ -195,22 +125,22 @@
       },
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.1,
-      "position": [-656, 148],
+      "position": [-576, 148],
       "id": "db1d22ea-3c2b-4d0f-82f6-bc3af1e01397",
-      "name": "Extract from File"
+      "name": "Extract from File1"
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are an expert ATS Resume Writer and LaTeX Content Engine.\n\nINPUTS:\nResume JSON: {{ $('Resume extractor').item.json.output }}\nJD JSON: {{ $('JD extractor').item.json.output }}\n\n---\n\n# YOUR TASK\n1. Extract the candidate's real information\n2. Rewrite experience bullets with strong action verbs and JD-matched keywords\n3. Reorder skills so JD-priority skills appear first\n4. Enhance project descriptions to highlight relevant technical impact\n5. Keep all content truthful — no hallucination\n\n---\n\n# ATS OPTIMIZATION RULES\n- Inject JD keywords naturally (no stuffing)\n- Use action verbs: Designed, Developed, Automated, Optimized, Built, Executed, Validated, Reduced\n- Keep bullets concise and impact-focused\n- Escape LaTeX special characters: & → \\&, % → \\%, $ → \\$, # → \\#, _ → \\_\n\n---\n\n# OUTPUT RULES\n- Output ONLY the complete LaTeX document\n- NO markdown fences, explanations, or extra text\n- Use REAL newlines, NOT \\n escape sequences\n- Document MUST compile with pdflatex without errors\n- All brackets properly opened and closed\n\n---\n\n\\documentclass[letterpaper,11pt]{article}\n\\usepackage[empty]{fullpage}\n\\usepackage{titlesec}\n\\usepackage{enumitem}\n\\usepackage[hidelinks]{hyperref}\n\\usepackage{fancyhdr}\n\\usepackage{tabularx}\n\\usepackage{multicol}\n\\usepackage[T1]{fontenc}\n\\pagestyle{fancy}\n\\fancyhf{}\n\\renewcommand{\\headrulewidth}{0pt}\n\\renewcommand{\\footrulewidth}{0pt}\n\\addtolength{\\oddsidemargin}{-0.5in}\n\\addtolength{\\evensidemargin}{-0.5in}\n\\addtolength{\\textwidth}{1in}\n\\addtolength{\\topskip}{0pt}\n\\addtolength{\\textheight}{1in}\n\n\\begin{document}\n\n% ===== HEADER =====\n\\begin{center}\n{\\Huge\\textbf{[FULL NAME]}}\\\\[4pt]\n[Email] $|$ [Phone] $|$ [Location]\\\\\n[LinkedIn] $|$ [GitHub] $|$ [Portfolio]\n\\end{center}\n\n% ===== SUMMARY =====\n\\section*{Professional Summary}\n[2-3 sentence summary tailored to JD]\n\n% ===== SKILLS =====\n\\section*{Technical Skills}\n\\begin{multicols}{2}\n\\begin{itemize}[leftmargin=*,nosep]\n\\item \\textbf{[Category]:} Skills listed by JD priority\n\\end{itemize}\n\\end{multicols}\n\n% ===== EXPERIENCE =====\n\\section*{Experience}\n\\textbf{[Job Title]} \\hfill [Dates]\\\\\n\\textit{[Company], [Location]}\n\\begin{itemize}[leftmargin=*,nosep]\n\\item [ATS-optimized bullet with JD keywords]\n\\end{itemize}\n\n% ===== PROJECTS =====\n\\section*{Projects}\n\\textbf{[Project Name]}\n\\begin{itemize}[leftmargin=*,nosep]\n\\item [Impact-focused project description]\n\\end{itemize}\n\n% ===== EDUCATION =====\n\\section*{Education}\n\\textbf{[Degree]} \\hfill [Year]\\\\\n\\textit{[Institution], [Location]}\n\n% ===== CERTIFICATIONS =====\n\\section*{Certifications \\& Achievements}\n\\begin{itemize}[leftmargin=*,nosep]\n\\item [Certifications and achievements]\n\\end{itemize}\n\n\\end{document}",
+        "text": "=You are an expert ATS Resume Writer and LaTeX Content Engine.\n\nYour ONLY job is to fill in resume content into the LaTeX skeleton below.\nYou are NOT designing the layout. The structure is fixed. You write words only.\n\n---\n\n# INPUTS\n\n## Resume Data (JSON)\n{{ $('Resume extractor').item.json.output }}\n\n## Job Description Intelligence (JSON)\n{{ $('JD extractor').item.json.output }}\n\n---\n\n# YOUR TASK\n\nUsing the Resume JSON and JD JSON above:\n1. Extract the candidate's real information\n2. Rewrite experience bullets with strong action verbs and JD-matched keywords\n3. Reorder skills so JD-priority skills appear first\n4. Enhance project descriptions to highlight relevant technical impact\n5. Keep all content truthful — do NOT hallucinate or invent facts\n\n---\n\n# ATS OPTIMIZATION RULES\n\n- Inject JD keywords naturally (no stuffing)\n- Use action verbs: Designed, Developed, Automated, Optimized, Built, Executed, Validated, Reduced\n- Keep bullets concise and impact-focused\n- Escape all LaTeX special characters: & → \\&, % → \\%, $ → \\$, # → \\#, _ → \\_\n\n---\n\n# OUTPUT RULES (NON-NEGOTIABLE)\n\n- Output ONLY the complete LaTeX document\n- NO markdown fences (no ```latex)\n- NO explanations, comments, or text outside LaTeX\n- Use REAL newlines — NOT \\\\n escape sequences\n- Do NOT double-escape backslashes\n- The document MUST compile with pdflatex without errors\n- Ensure all { } braces are properly opened and closed\n- Ensure all \\\\begin{} have matching \\\\end{}\n\n---\n\n# COMPLETE LATEX SKELETON — FILL IN THE [CONTENT] ZONES ONLY\n\n\\documentclass[letterpaper,11pt]{article}\n\\usepackage[empty]{fullpage}\n\\usepackage{titlesec}\n\\usepackage{enumitem}\n\\usepackage[hidelinks]{hyperref}\n\\usepackage{fancyhdr}\n\\usepackage{tabularx}\n\\usepackage{multicol}\n\\usepackage[T1]{fontenc}\n\\pagestyle{fancy}\n\\fancyhf{}\n\\renewcommand{\\headrulewidth}{0pt}\n\\renewcommand{\\footrulewidth}{0pt}\n\\addtolength{\\oddsidemargin}{-0.5in}\n\\addtolength{\\evensidemargin}{-0.5in}\n\\addtolength{\\textwidth}{1in}\n\\addtolength{\\topskip}{0pt}\n\\addtolength{\\textheight}{1in}\n\n\\begin{document}\n\n% ===== HEADER =====\n\\begin{center}\n{\\Huge\\textbf{[FULL NAME]}}\\\\[4pt]\n[Email] $|$ [Phone] $|$ [Location]\\\\\n[LinkedIn] $|$ [GitHub] $|$ [Portfolio]\n\\end{center}\n\n% ===== SUMMARY =====\n\\section*{Professional Summary}\n[2-3 sentence summary tailored to JD]\n\n% ===== SKILLS =====\n\\section*{Technical Skills}\n\\begin{multicols}{2}\n\\begin{itemize}[leftmargin=*,nosep]\n\\item \\textbf{[Category]:} Skills listed by JD priority\n\\end{itemize}\n\\end{multicols}\n\n% ===== EXPERIENCE =====\n\\section*{Experience}\n\\textbf{[Job Title]} \\hfill [Dates]\\\\\n\\textit{[Company], [Location]}\n\\begin{itemize}[leftmargin=*,nosep]\n\\item [ATS-optimized bullet with JD keywords]\n\\end{itemize}\n\n% ===== PROJECTS =====\n\\section*{Projects}\n\\textbf{[Project Name]}\n\\begin{itemize}[leftmargin=*,nosep]\n\\item [Impact-focused project description]\n\\end{itemize}\n\n% ===== EDUCATION =====\n\\section*{Education}\n\\textbf{[Degree]} \\hfill [Year]\\\\\n\\textit{[Institution], [Location]}\n\n% ===== CERTIFICATIONS =====\n\\section*{Certifications \\& Achievements}\n\\begin{itemize}[leftmargin=*,nosep]\n\\item [Certifications and achievements]\n\\end{itemize}\n\n\\end{document}",
         "needsFallback": true,
         "options": {
-          "systemMessage": "You are an ATS-optimized resume generator. Output valid LaTeX only."
+          "systemMessage": "You are a helpful assistant. Thanks for using this automation agent to generate your customized resume.\n"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
-      "position": [496, 148],
+      "position": [576, 148],
       "id": "3fd5abdc-e089-4608-a346-47b3bca4afba",
       "name": "Generated resume unformatted",
       "retryOnFail": true,
@@ -242,7 +172,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1136, 0],
+      "position": [1216, 0],
       "id": "2cdcbd05-8a61-4150-afee-5437d0360209",
       "name": "Compile latex code",
       "retryOnFail": true,
@@ -261,7 +191,7 @@
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [2000, 244],
+      "position": [2080, 244],
       "id": "976b5753-e2a8-4361-a151-070a0485fad7",
       "name": "Send resume via telegram",
       "webhookId": "b457e2c9-ba51-4dc6-a4f2-4c972dc68c46",
@@ -275,32 +205,32 @@
     },
     {
       "parameters": {
-        "jsCode": "const filename = $('Prepare compilation ready').first().json.filename || \"Resume.pdf\";\nconst candidateName = $('Prepare compilation ready').first().json.candidateName || \"Candidate\";\nconst item = $input.first();\nreturn [{\n  json: { filename, candidateName },\n  binary: { pdfData: item.binary.pdfData }\n}];"
+        "jsCode": "// Carry the filename forward alongside the binary PDF data\nconst filename = $('Prepare compilation ready').first().json.filename || \"Resume.pdf\";\nconst candidateName = $('Prepare compilation ready').first().json.candidateName || \"Candidate\";\n\n// Pass binary through untouched, just add metadata\nconst item = $input.first();\n\nreturn [{\n  json: {\n    filename,\n    candidateName\n  },\n  binary: {\n    pdfData: item.binary.pdfData\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1488, 0],
+      "position": [1568, 0],
       "id": "2c02f085-c16c-4b89-83c1-c04a6abe0749",
       "name": "Compile & convert to pdf file"
     },
     {
       "parameters": {
-        "jsCode": "const raw = $input.first().json.output || \"\";\nlet candidateName = \"Candidate\";\ntry {\n  const resumeOutput = $('Resume extractor').first().json.output || \"\";\n  const nameMatch = resumeOutput.match(/\"full_name\"\\s*:\\s*\"([^\"]+)\"/);\n  if (nameMatch) candidateName = nameMatch[1];\n} catch(e) {}\nconst safeFilename = candidateName.replace(/[^a-zA-Z0-9\\s]/g, \"\").trim().replace(/\\s+/g, \"_\") + \"_Resume.pdf\";\nlet latex = raw\n  .replace(/^```latex\\s*/i, \"\")\n  .replace(/^```\\s*/i, \"\")\n  .replace(/```\\s*$/i, \"\")\n  .trim();\nconst docStart = latex.indexOf(\"\\\\documentclass\");\nif (docStart > 0) latex = latex.slice(docStart);\nconst docEnd = latex.lastIndexOf(\"\\\\end{document}\");\nif (docEnd !== -1) latex = latex.slice(0, docEnd + \"\\\\end{document}\".length);\nconst requestBody = JSON.stringify({\n  compiler: \"pdflatex\",\n  resources: [{ main: true, content: latex }]\n});\nreturn [{ \n  json: { \n    requestBody, filename: safeFilename, candidateName,\n    latexPreview: latex.slice(0, 200)\n  } \n}];"
+        "jsCode": "const raw = $input.first().json.output || \"\";\n\n// Pull candidate name from Resume extractor for filename\nlet candidateName = \"Candidate\";\ntry {\n  const resumeOutput = $('Resume extractor').first().json.output || \"\";\n  const nameMatch = resumeOutput.match(/\"full_name\"\\s*:\\s*\"([^\"]+)\"/);\n  if (nameMatch) candidateName = nameMatch[1];\n} catch(e) {}\n\n// Sanitize name for filename (remove special chars)\nconst safeFilename = candidateName.replace(/[^a-zA-Z0-9\\s]/g, \"\").trim().replace(/\\s+/g, \"_\") + \"_Resume.pdf\";\n\n// 1. Strip markdown fences\nlet latex = raw\n  .replace(/^```latex\\s*/i, \"\")\n  .replace(/^```\\s*/i, \"\")\n  .replace(/```\\s*$/i, \"\")\n  .trim();\n\n// 2. Strip anything before \\documentclass\nconst docStart = latex.indexOf(\"\\\\documentclass\");\nif (docStart > 0) {\n  latex = latex.slice(docStart);\n}\n\n// 3. Strip anything after \\end{document}\nconst docEnd = latex.lastIndexOf(\"\\\\end{document}\");\nif (docEnd !== -1) {\n  latex = latex.slice(0, docEnd + \"\\\\end{document}\".length);\n}\n\n// 4. Build request body\nconst requestBody = JSON.stringify({\n  compiler: \"pdflatex\",\n  resources: [{ main: true, content: latex }]\n});\n\nreturn [{ \n  json: { \n    requestBody,\n    filename: safeFilename,\n    candidateName,\n    latexPreview: latex.slice(0, 200)\n  } \n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [848, 0],
+      "position": [928, 0],
       "id": "dc794a6c-22ca-4ae8-b0f3-d7237027b564",
       "name": "Prepare compilation ready"
     },
     {
       "parameters": {
-        "modelName": "models/gemini-3-pro-image-preview",
+        "modelName": "models/gemini-2.0-flash-lite-001",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
-      "position": [1144, 520],
+      "position": [1224, 520],
       "id": "78952b44-36d7-4f84-b2dd-7575a53ba62c",
       "name": "Google Gemini Chat Model — ATS",
       "credentials": {
@@ -313,11 +243,12 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a senior ATS specialist. Score resume-to-JD match 0-100.\n\nResume JSON: {{ $('Resume extractor').item.json.output }}\nJD JSON: {{ $('JD extractor').item.json.output }}\n\n---\n\nScoring breakdown:\n- Keyword coverage (high-priority JD keywords found in resume): 40%\n- Skills alignment (must-have skills present): 30%\n- Experience relevance (years + domain match): 20%\n- Role title alignment: 10%\n\nOutput ONLY valid JSON. No markdown.\n{\n  \"score\": 0,\n  \"recommendation\": \"Strong Match|Good Match|Moderate Match|Weak Match\",\n  \"gaps\": [\"Gap 1\", \"Gap 2\", \"Gap 3\"],\n  \"top_matching_keywords\": []\n}"
+        "text": "=You are a senior technical recruiter and ATS (Applicant Tracking System) specialist with 15+ years of experience.\n\nYour task is to score how well a candidate's resume matches a given job description, and identify the top gaps.\n\n---\n\n# INPUTS\n\n## Resume JSON\n{{ $('Resume extractor').item.json.output }}\n\n## Job Description JSON\n{{ $('JD extractor').item.json.output }}\n\n---\n\n# YOUR TASK\n\nPerform a precise ATS match analysis:\n\n1. Compare the candidate's skills, experience, titles, and keywords against the JD's must-have skills, priority keywords, responsibilities, and experience requirements.\n2. Calculate a match score from 0 to 100 based on:\n   - Keyword coverage (high-priority JD keywords found in resume): 40%\n   - Skills alignment (must-have skills present): 30%\n   - Experience relevance (years + domain match): 20%\n   - Role title alignment: 10%\n3. Identify exactly 3 gap bullets — the most impactful things missing or weak in the resume relative to the JD. Keep each bullet under 15 words. Be specific, not generic.\n\n---\n\n# OUTPUT RULES (STRICT)\n\n- Return ONLY valid JSON\n- No markdown, no explanation, no extra text\n- score must be an integer 0–100\n- gaps must be an array of exactly 3 strings\n- recommendation must be one of: \"Strong Match\", \"Good Match\", \"Moderate Match\", \"Weak Match\"\n\n---\n\n# OUTPUT FORMAT\n\n{\n  \"score\": 0,\n  \"recommendation\": \"\",\n  \"gaps\": [\n    \"Gap 1 — specific missing skill or experience\",\n    \"Gap 2 — specific missing keyword or responsibility\",\n    \"Gap 3 — specific alignment issue\"\n  ],\n  \"top_matching_keywords\": []\n}",
+        "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
-      "position": [1072, 296],
+      "position": [1152, 296],
       "id": "eb389777-22bb-4738-be36-a494db401aa0",
       "name": "ATS Score Agent",
       "retryOnFail": true,
@@ -325,12 +256,12 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-3-pro-image-preview",
+        "modelName": "models/gemini-2.0-flash-lite-001",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
-      "position": [1496, 520],
+      "position": [1576, 520],
       "id": "95cb320e-89c5-4d52-a918-307547daff9d",
       "name": "Google Gemini Chat Model — CoverLetter",
       "credentials": {
@@ -343,11 +274,12 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are an elite career coach and professional cover letter writer.\n\nResume JSON: {{ $('Resume extractor').item.json.output }}\nJD JSON: {{ $('JD extractor').item.json.output }}\nATS Analysis: {{ $('ATS Score Agent').item.json.output }}\n\n---\n\nWrite a professional HTML cover letter (300-380 words):\n1. Strong hook referencing company/role\n2. Why this role and company\n3. 2-3 strongest matching achievements\n4. Address biggest skill gap as learning narrative\n5. Confident closing CTA\n\nRules: Use ONLY real data. No clichés. No placeholders.\nOutput complete HTML document with inline CSS, Georgia serif font, 700px max-width."
+        "text": "=You are an elite career coach and professional cover letter writer.\n\nYour task is to write a compelling, personalized cover letter in clean HTML format — ready to be sent as an email or saved as a file.\n\n---\n\n# INPUTS\n\n## Resume JSON\n{{ $('Resume extractor').item.json.output }}\n\n## Job Description JSON\n{{ $('JD extractor').item.json.output }}\n\n## ATS Analysis\n{{ $('ATS Score Agent').item.json.output }}\n\n---\n\n# YOUR TASK\n\nWrite a professional cover letter that:\n1. Opens with a strong, specific hook — reference the company/role directly\n2. Paragraph 1: Why this role and company specifically (use JD intelligence)\n3. Paragraph 2: 2–3 strongest matching achievements from resume (quantified where possible)\n4. Paragraph 3: Address the biggest skill gap from ATS analysis — turn it into a learning narrative\n5. Closes with a confident, action-oriented call to action\n6. Tone: Professional but human — not robotic, not sycophantic\n\n---\n\n# STRICT RULES\n\n- Use ONLY real data from the Resume JSON — never hallucinate names, companies, or achievements\n- Keep total length to 300–380 words\n- Do NOT use clichés: \"I am writing to apply\", \"passion for\", \"team player\", \"go-getter\"\n- Use the candidate's actual name from the resume\n- Use the company name and role title from the JD if available, else use generic references\n- No placeholders like [Company Name] — if data is unavailable, write naturally around it\n\n---\n\n# OUTPUT FORMAT\n\nReturn ONLY a complete HTML document — no markdown fences, no explanation outside HTML.\n\nThe HTML must:\n- Be self-contained (inline CSS only, no external stylesheets)\n- Render cleanly in Gmail and standard email clients\n- Use a clean, professional font stack: font-family: Georgia, serif\n- Max width: 700px, centered\n- Include: candidate name as header, today's date, role applied for, full letter body, signature block\n\nStructure:\n<!DOCTYPE html>\n<html>\n<head><meta charset=\"UTF-8\"><style>body { font-family: Georgia, serif; max-width: 700px; margin: 40px auto; padding: 20px; }</style></head>\n<body>\n<h1>[CANDIDATE NAME]</h1>\n<p>[DATE]</p>\n<p>[COMPANY NAME]<br>[ROLE TITLE]</p>\n<p>Dear Hiring Manager,</p>\n<p>[PARAGRAPH 1 — Hook + Why This Role]</p>\n<p>[PARAGRAPH 2 — Key Achievements]</p>\n<p>[PARAGRAPH 3 — Addressing Gap + Learning]</p>\n<p>[PARAGRAPH 4 — Closing CTA]</p>\n<p>Sincerely,<br>[CANDIDATE NAME]</p>\n</body>\n</html>",
+        "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
-      "position": [1424, 296],
+      "position": [1504, 296],
       "id": "52602f9d-9c98-4d5d-a6ca-9dc5c9c70396",
       "name": "Cover Letter Agent",
       "retryOnFail": true,
@@ -355,11 +287,11 @@
     },
     {
       "parameters": {
-        "jsCode": "let atsScore = 0; let atsRecommendation = \"N/A\"; let atsGaps = []; let atsKeywords = [];\ntry {\n  const atsRaw = $('ATS Score Agent').first().json.output || \"\";\n  const atsClean = atsRaw.replace(/```json/gi, \"\").replace(/```/g, \"\").trim();\n  const firstBrace = atsClean.indexOf(\"{\");\n  const lastBrace = atsClean.lastIndexOf(\"}\");\n  const atsJson = JSON.parse(atsClean.slice(firstBrace, lastBrace + 1));\n  atsScore = atsJson.score || 0;\n  atsRecommendation = atsJson.recommendation || \"N/A\";\n  atsGaps = atsJson.gaps || [];\n  atsKeywords = atsJson.top_matching_keywords || [];\n} catch(e) { atsGaps = [\"Could not parse ATS analysis\"]; }\n\nfunction scoreBar(score) {\n  const filled = Math.round(score / 10);\n  return \"🟩\".repeat(filled) + \"⬜\".repeat(10 - filled);\n}\nfunction recommendationEmoji(rec) {\n  if (rec.includes(\"Strong\")) return \"🚀\";\n  if (rec.includes(\"Good\")) return \"✅\";\n  if (rec.includes(\"Moderate\")) return \"⚠️\";\n  return \"🔴\";\n}\n\nconst candidateName = $('Compile & convert to pdf file').first().json.candidateName || \"Candidate\";\nconst filename = $('Compile & convert to pdf file').first().json.filename || \"Resume.pdf\";\nconst gapLines = atsGaps.map((g, i) => `   ${i + 1}. ${g}`).join(\"\\n\");\nconst caption = `${recommendationEmoji(atsRecommendation)} *${candidateName}* — Resume Ready\\n\\n📊 *ATS Match Score: ${atsScore}/100*\\n${scoreBar(atsScore)} ${atsRecommendation}\\n\\n🔍 *Top Gaps:*\\n${gapLines}\\n\\n📄 ${filename}\\n🤖 ATS-optimized & JD-matched`;\n\nlet coverLetterHtml = \"\";\ntry {\n  let clRaw = $('Cover Letter Agent').first().json.output || \"\";\n  clRaw = clRaw.replace(/```html/gi, \"\").replace(/```/g, \"\").trim();\n  if (clRaw.startsWith(\"<\") && clRaw.includes(\"</html>\")) {\n    const htmlStart = clRaw.indexOf(\"<\");\n    const htmlEnd = clRaw.lastIndexOf(\"</html>\") + 7;\n    coverLetterHtml = clRaw.slice(htmlStart, htmlEnd);\n  }\n} catch(e) {}\n\nconst safeName = candidateName.replace(/[^a-zA-Z0-9\\s]/g, \"\").trim().replace(/\\s+/g, \"_\");\n\nconst items = [{ json: { caption, filename, candidateName } }];\n\nif (coverLetterHtml) {\n  items[0].binary = {\n    coverLetterFile: {\n      data: Buffer.from(coverLetterHtml, \"utf-8\").toString(\"base64\"),\n      mimeType: \"text/html\",\n      fileName: `${safeName}_Cover_Letter.html`\n    }\n  };\n}\n\nreturn items;"
+        "jsCode": "\n// ── Parse ATS Score ──────────────────────────────────────\nlet atsScore = 0;\nlet atsRecommendation = \"N/A\";\nlet atsGaps = [];\nlet atsKeywords = [];\n\ntry {\n  const atsRaw = $('ATS Score Agent').first().json.output || \"\";\n  const atsClean = atsRaw\n    .replace(/```json/gi, \"\")\n    .replace(/```/g, \"\")\n    .trim();\n  const firstBrace = atsClean.indexOf(\"{\");\n  const lastBrace = atsClean.lastIndexOf(\"}\");\n  const atsJson = JSON.parse(atsClean.slice(firstBrace, lastBrace + 1));\n  atsScore = atsJson.score || 0;\n  atsRecommendation = atsJson.recommendation || \"N/A\";\n  atsGaps = atsJson.gaps || [];\n  atsKeywords = atsJson.top_matching_keywords || [];\n} catch(e) {\n  atsGaps = [\"Could not parse ATS analysis\"];\n}\n\n// ── Score emoji bar ───────────────────────────────────────\nfunction scoreBar(score) {\n  const filled = Math.round(score / 10);\n  return \"🟩\".repeat(filled) + \"⬜\".repeat(10 - filled);\n}\n\nfunction recommendationEmoji(rec) {\n  if (rec.includes(\"Strong\")) return \"🚀\";\n  if (rec.includes(\"Good\")) return \"✅\";\n  if (rec.includes(\"Moderate\")) return \"⚠️\";\n  return \"🔴\";\n}\n\n// ── Build Telegram caption ────────────────────────────────\nconst candidateName = $('Compile & convert to pdf file').first().json.candidateName || \"Candidate\";\nconst filename = $('Compile & convert to pdf file').first().json.filename || \"Resume.pdf\";\n\nconst gapLines = atsGaps.map((g, i) => `   ${i + 1}. ${g}`).join(\"\\n\");\n\nconst caption = `${recommendationEmoji(atsRecommendation)} *${candidateName}* — Resume Ready\\n\\n📊 *ATS Match Score: ${atsScore}/100*\\n${scoreBar(atsScore)} ${atsRecommendation}\\n\\n🔍 *Top Gaps to Address:*\\n${gapLines}\\n\\n📄 File: ${filename}\\n🤖 ATS-optimized & JD-matched`;\n\n// ── Clean Cover Letter HTML ───────────────────────────────\nlet coverLetterHtml = \"\";\ntry {\n  const clRaw = $('Cover Letter Agent').first().json.output || \"\";\n  coverLetterHtml = clRaw\n    .replace(/```html/gi, \"\")\n    .replace(/```/g, \"\")\n    .trim();\n  \n  // Validate it looks like HTML\n  if (coverLetterHtml.startsWith(\"<\") && coverLetterHtml.includes(\"</html>\")) {\n    // Extract just the HTML portion\n    const htmlStart = coverLetterHtml.indexOf(\"<\");\n    const htmlEnd = coverLetterHtml.lastIndexOf(\"</html>\") + 7;\n    coverLetterHtml = coverLetterHtml.slice(htmlStart, htmlEnd);\n  } else {\n    coverLetterHtml = \"\";\n  }\n} catch(e) {\n  coverLetterHtml = \"\";\n}\n\n// ── Build output ──────────────────────────────────────────\nconst safeName = candidateName.replace(/[^a-zA-Z0-9\\s]/g, \"\").trim().replace(/\\s+/g, \"_\");\n\nconst items = [\n  {\n    json: {\n      caption,\n      filename,\n      candidateName\n    }\n  }\n];\n\n// Add cover letter as binary if available\nif (coverLetterHtml) {\n  items[0].binary = {\n    coverLetterFile: {\n      data: Buffer.from(coverLetterHtml, \"utf-8\").toString(\"base64\"),\n      mimeType: \"text/html\",\n      fileName: `${safeName}_Cover_Letter.html`\n    }\n  };\n}\n\nreturn items;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1776, 148],
+      "position": [1856, 148],
       "id": "28224cfc-52ef-475d-8df0-c3b2dbd1970b",
       "name": "Build Caption + Cover Letter"
     },
@@ -376,7 +308,7 @@
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [2000, 52],
+      "position": [2080, 52],
       "id": "b7459091-518d-48f2-b639-944a09e9d471",
       "name": "Send Cover Letter via Telegram",
       "webhookId": "db4081bc-9601-442c-bad2-3e378da4ea00",
@@ -393,252 +325,73 @@
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
-      "position": [272, 148],
+      "position": [352, 148],
       "id": "b4096189-befd-4d8f-9162-1220fe770c9f",
       "name": "Wait for Resume & JD"
     },
     {
       "parameters": {
-        "operation": "sendMessage",
-        "chatId": "-5273070660",
-        "text": "=🎬 *Portfolio Video Generated!*\n\n{{ $json.caption }}\n\n🔗 [Download Video]({{ $json.videoUrl }})"
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
       },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [2520, 520],
-      "id": "telegram-video-node",
-      "name": "Send Video via Telegram",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [-216, 372],
+      "id": "23447079-80fb-4e9c-9494-8375c6382f48",
+      "name": "OpenAI Chat Model",
       "credentials": {
-        "telegramApi": {
-          "id": "wTgpToi8LViYaKFE",
-          "name": "Telegram account"
+        "openAiApi": {
+          "id": "KxTIboD2Q42EFry6",
+          "name": "OpenAI API 1"
         }
       }
     },
     {
       "parameters": {
-        "jsCode": "const resumeOutput = $('Resume extractor').first().json.output || \"{}\";\nconst jdOutput = $('JD extractor').first().json.output || \"{}\";\nlet resumeJson, jdJson;\ntry { resumeJson = JSON.parse(resumeOutput); } catch(e) { resumeJson = {}; }\ntry { jdJson = JSON.parse(jdOutput); } catch(e) { jdJson = {}; }\n\nconst name = resumeJson?.candidate_identity?.full_name || \"Professional\";\nconst role = jdJson?.role_title || \"Target Role\";\nconst skills = resumeJson?.skill_matrix?.technical_skills || {};\nconst skillList = Object.values(skills).flat().slice(0, 10).join(\", \");\n\nconst imagePrompt = `Professional LinkedIn banner for ${name}, a ${role} specialist. Skills: ${skillList}. Style: clean, modern, tech-themed with blue gradient, abstract circuit board patterns, minimalist design. Text overlay: \"${name} | ${role}\". 1200x600 pixels.`;\n\nconst videoPrompt = `Professional portfolio showcase video for ${name}, a skilled ${role} professional. ${skillList}. 15 seconds, cinematic transitions, modern corporate style, blue and white color scheme, animated text showing key achievements and skills.`;\n\nreturn [{\n  json: {\n    imagePrompt,\n    videoPrompt,\n    candidateName: name,\n    role: role\n  }\n}];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [1744, 784],
-      "id": "media-prompt-builder",
-      "name": "Build Media Prompts"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.openai.com/v1/images/generations",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{ $credentials.openAiApi.apiKey }}" },
-            { "name": "Content-Type", "value": "application/json" }
-          ]
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
         },
-        "sendBody": true,
-        "contentType": "raw",
-        "rawContentType": "application/json",
-        "body": "={\n  \"model\": \"dall-e-3\",\n  \"prompt\": \"{{ $('Build Media Prompts').item.json.imagePrompt }}\",\n  \"n\": 1,\n  \"size\": \"1792x1024\"\n}",
-        "options": {
-          "response": {
-            "response": {
-              "responseFormat": "string"
-            }
-          }
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [2000, 784],
-      "id": "image-gen-openai",
-      "name": "Generate Image (OpenAI DALL-E 3)"
-    },
-    {
-      "parameters": {
-        "jsCode": "const response = $input.first().json;\nlet imageUrl = \"\";\nif (response.data && response.data[0] && response.data[0].url) {\n  imageUrl = response.data[0].url;\n}\nconst caption = `🖼️ *Portfolio Banner Generated*\\n\\nGenerated for: ${$('Build Media Prompts').item.json.candidateName}\\nRole: ${$('Build Media Prompts').item.json.role}`;\nreturn [{\n  json: { imageUrl, caption, ...$input.first().json }\n}];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [2208, 784],
-      "id": "image-result-processor",
-      "name": "Process Image Result"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.openai.com/v1/video/generations",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{ $credentials.openAiApi.apiKey }}" },
-            { "name": "Content-Type", "value": "application/json" }
-          ]
-        },
-        "sendBody": true,
-        "contentType": "raw",
-        "rawContentType": "application/json",
-        "body": "={\n  \"model\": \"sora-2-pro\",\n  \"prompt\": \"{{ $('Build Media Prompts').item.json.videoPrompt }}\",\n  \"duration\": 15\n}",
+        "builtInTools": {},
         "options": {}
       },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [2000, 920],
-      "id": "video-gen-sora",
-      "name": "Generate Video (OpenAI Sora 2 Pro)",
-      "retryOnFail": true,
-      "waitBetweenTries": 10000
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.veo.google.com/v1/videos:generate",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{ $credentials.googlePalmApi.apiKey }}" },
-            { "name": "Content-Type", "value": "application/json" }
-          ]
-        },
-        "sendBody": true,
-        "contentType": "raw",
-        "rawContentType": "application/json",
-        "body": "={\n  \"model\": \"veo-3.1\",\n  \"prompt\": \"{{ $('Build Media Prompts').item.json.videoPrompt }}\",\n  \"aspectRatio\": \"16:9\",\n  \"duration\": 15\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [2000, 1056],
-      "id": "video-gen-veo",
-      "name": "Generate Video (Google Veo 3.1)",
-      "retryOnFail": true,
-      "waitBetweenTries": 10000
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.x.ai/v1/video/generations",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{ $credentials.xAiApi.apiKey }}" },
-            { "name": "Content-Type", "value": "application/json" }
-          ]
-        },
-        "sendBody": true,
-        "contentType": "raw",
-        "rawContentType": "application/json",
-        "body": "={\n  \"model\": \"grok-imagine-video\",\n  \"prompt\": \"{{ $('Build Media Prompts').item.json.videoPrompt }}\",\n  \"duration\": 10\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [2000, 1192],
-      "id": "video-gen-grok",
-      "name": "Generate Video (xAI Grok Imagine)",
-      "retryOnFail": true,
-      "waitBetweenTries": 10000
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.bytedance.com/v1/video/generations",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{ $credentials.bytedanceApi.apiKey }}" },
-            { "name": "Content-Type", "value": "application/json" }
-          ]
-        },
-        "sendBody": true,
-        "contentType": "raw",
-        "rawContentType": "application/json",
-        "body": "={\n  \"model\": \"seedance-2.0-fast\",\n  \"prompt\": \"{{ $('Build Media Prompts').item.json.videoPrompt }}\",\n  \"duration\": 10,\n  \"quality\": \"fast\"\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [2000, 1328],
-      "id": "video-gen-seedance",
-      "name": "Generate Video (ByteDance Seedance 2.0)",
-      "retryOnFail": true,
-      "waitBetweenTries": 10000
-    },
-    {
-      "parameters": {
-        "mode": "combine",
-        "combinationMode": "mergeByPosition"
-      },
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [2336, 920],
-      "id": "media-merge-node",
-      "name": "Merge Media Results"
-    },
-    {
-      "parameters": {
-        "jsCode": "const results = $input.all();\nlet bestVideo = null;\nlet bestImage = null;\nlet captions = [];\n\nfor (const item of results) {\n  if (item.json.imageUrl) bestImage = item.json.imageUrl;\n  if (item.json.videoUrl || item.json.id) {\n    if (!bestVideo || (item.json.model && item.json.model.includes(\"pro\"))) {\n      bestVideo = item.json;\n    }\n  }\n  if (item.json.caption) captions.push(item.json.caption);\n}\n\nreturn [{\n  json: {\n    bestImageUrl: bestImage,\n    bestVideoUrl: bestVideo?.videoUrl || bestVideo?.url,\n    candidateName: $('Build Media Prompts').item.json.candidateName,\n    caption: `🎬 *Portfolio Media Ready!*\\n\\n👤 ${$('Build Media Prompts').item.json.candidateName}\\n🖼️ Banner: ${bestImage ? '✅ Generated' : '❌ Failed'}\\n🎬 Video: ${bestVideo ? '✅ Generated' : '❌ Failed'}`\n  }\n}];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [2520, 784],
-      "id": "media-final-processor",
-      "name": "Finalize Media Output"
-    },
-    {
-      "parameters": {
-        "jsCode": "const mediaChoice = $('Resume & JD submitted').item.json['Generate Portfolio Media? 🎨'];\nconst mediaNodes = ['Build Media Prompts', 'Generate Image (OpenAI DALL-E 3)', 'Generate Video (OpenAI Sora 2 Pro)', 'Generate Video (Google Veo 3.1)', 'Generate Video (xAI Grok Imagine)', 'Generate Video (ByteDance Seedance 2.0)', 'Merge Media Results', 'Finalize Media Output', 'Send Video via Telegram'];\nif (mediaChoice === 'none') {\n  return [{ json: { skipMedia: true } }];\n}\nreturn [{ json: { skipMedia: false, mediaChoice } }];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [1408, 784],
-      "id": "media-gate-node",
-      "name": "Media Gate (Check Form Input)"
-    },
-    {
-      "parameters": {
-        "jsCode": "const modelChoice = $('Resume & JD submitted').item.json['Preferred AI Model 🤖'] || 'auto';\nreturn [{ json: { model: modelChoice, original: $input.first().json } }];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [1424, -148],
-      "id": "model-selector-node",
-      "name": "Model Selector (Route by Choice)"
-    },
-    {
-      "parameters": {
-        "mode": "chooseBranch"
-      },
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [1600, 528],
-      "id": "merge-parallel-agents",
-      "name": "Merge Parallel Agents"
-    },
-    {
-      "parameters": {
-        "models": {},
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
-      "typeVersion": 1.2,
-      "position": [-200, 796],
-      "id": "groq-model-node",
-      "name": "Groq (Fast Fallback)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [136, 372],
+      "id": "564827e7-7da1-404a-98c4-928747fc6e4c",
+      "name": "OpenAI Chat Model1",
       "credentials": {
-        "groqApi": {
-          "id": "groq-cred",
-          "name": "Groq API"
+        "openAiApi": {
+          "id": "KxTIboD2Q42EFry6",
+          "name": "OpenAI API 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [712, 372],
+      "id": "2272dbfb-1b5b-415d-8141-63ddaf4b0153",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "KxTIboD2Q42EFry6",
+          "name": "OpenAI API 1"
         }
       }
     }
@@ -647,50 +400,27 @@
   "connections": {
     "Resume & JD submitted": {
       "main": [[
-        { "node": "Extract from File", "type": "main", "index": 0 }
+        { "node": "Extract from File1", "type": "main", "index": 0 }
       ]]
     },
-    "Extract from File": {
-      "main": [[
-        { "node": "Resume extractor", "type": "main", "index": 0 },
-        { "node": "JD extractor", "type": "main", "index": 0 }
-      ]]
-    },
-    "Google Gemini 2.5 Flash Image": {
+    "Google Gemini Chat Model2": {
       "ai_languageModel": [[
-        { "node": "Resume extractor", "type": "ai_languageModel", "index": 0 },
+        { "node": "Resume extractor", "type": "ai_languageModel", "index": 0 }
+      ]]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [[
         { "node": "JD extractor", "type": "ai_languageModel", "index": 0 }
       ]]
     },
-    "Google Gemini 3.1 Flash Image": {
+    "Google Gemini Chat Model4": {
       "ai_languageModel": [[
-        { "node": "Resume extractor", "type": "ai_languageModel", "index": 1 }
-      ]]
-    },
-    "Google Gemini 3 Pro Image": {
-      "ai_languageModel": [[
-        { "node": "JD extractor", "type": "ai_languageModel", "index": 1 },
         { "node": "Generated resume unformatted", "type": "ai_languageModel", "index": 0 }
-      ]]
-    },
-    "OpenAI GPT 5.4 Image-2": {
-      "ai_languageModel": [[
-        { "node": "Generated resume unformatted", "type": "ai_languageModel", "index": 1 }
-      ]]
-    },
-    "OpenRouter Auto": {
-      "ai_languageModel": [[
-        { "node": "Generated resume unformatted", "type": "ai_languageModel", "index": 2 }
-      ]]
-    },
-    "Groq (Fast Fallback)": {
-      "ai_languageModel": [[
-        { "node": "Resume extractor", "type": "ai_languageModel", "index": 2 }
       ]]
     },
     "Resume extractor": {
       "main": [[
-        { "node": "Wait for Resume & JD", "type": "main", "index": 0 }
+        { "node": "JD extractor", "type": "main", "index": 0 }
       ]]
     },
     "JD extractor": {
@@ -698,41 +428,15 @@
         { "node": "Wait for Resume & JD", "type": "main", "index": 1 }
       ]]
     },
-    "Wait for Resume & JD": {
+    "Extract from File1": {
       "main": [[
-        { "node": "Generated resume unformatted", "type": "main", "index": 0 }
-      ]]
-    },
-    "Google Gemini Chat Model — ATS": {
-      "ai_languageModel": [[
-        { "node": "ATS Score Agent", "type": "ai_languageModel", "index": 0 }
-      ]]
-    },
-    "Google Gemini Chat Model — CoverLetter": {
-      "ai_languageModel": [[
-        { "node": "Cover Letter Agent", "type": "ai_languageModel", "index": 0 }
+        { "node": "Resume extractor", "type": "main", "index": 0 }
       ]]
     },
     "Generated resume unformatted": {
       "main": [[
         { "node": "Prepare compilation ready", "type": "main", "index": 0 },
-        { "node": "ATS Score Agent", "type": "main", "index": 0 },
-        { "node": "Cover Letter Agent", "type": "main", "index": 0 }
-      ]]
-    },
-    "ATS Score Agent": {
-      "main": [[
-        { "node": "Merge Parallel Agents", "type": "main", "index": 0 }
-      ]]
-    },
-    "Cover Letter Agent": {
-      "main": [[
-        { "node": "Merge Parallel Agents", "type": "main", "index": 1 }
-      ]]
-    },
-    "Prepare compilation ready": {
-      "main": [[
-        { "node": "Compile latex code", "type": "main", "index": 0 }
+        { "node": "ATS Score Agent", "type": "main", "index": 0 }
       ]]
     },
     "Compile latex code": {
@@ -742,10 +446,30 @@
     },
     "Compile & convert to pdf file": {
       "main": [[
-        { "node": "Merge Parallel Agents", "type": "main", "index": 2 }
+        { "node": "Build Caption + Cover Letter", "type": "main", "index": 0 }
       ]]
     },
-    "Merge Parallel Agents": {
+    "Prepare compilation ready": {
+      "main": [[
+        { "node": "Compile latex code", "type": "main", "index": 0 }
+      ]]
+    },
+    "Google Gemini Chat Model — ATS": {
+      "ai_languageModel": [[
+        { "node": "ATS Score Agent", "type": "ai_languageModel", "index": 0 }
+      ]]
+    },
+    "ATS Score Agent": {
+      "main": [[
+        { "node": "Cover Letter Agent", "type": "main", "index": 0 }
+      ]]
+    },
+    "Google Gemini Chat Model — CoverLetter": {
+      "ai_languageModel": [[
+        { "node": "Cover Letter Agent", "type": "ai_languageModel", "index": 0 }
+      ]]
+    },
+    "Cover Letter Agent": {
       "main": [[
         { "node": "Build Caption + Cover Letter", "type": "main", "index": 0 }
       ]]
@@ -756,58 +480,24 @@
         { "node": "Send Cover Letter via Telegram", "type": "main", "index": 0 }
       ]]
     },
-    "Build Media Prompts": {
+    "Wait for Resume & JD": {
       "main": [[
-        { "node": "Generate Image (OpenAI DALL-E 3)", "type": "main", "index": 0 },
-        { "node": "Generate Video (OpenAI Sora 2 Pro)", "type": "main", "index": 0 },
-        { "node": "Generate Video (Google Veo 3.1)", "type": "main", "index": 0 },
-        { "node": "Generate Video (xAI Grok Imagine)", "type": "main", "index": 0 },
-        { "node": "Generate Video (ByteDance Seedance 2.0)", "type": "main", "index": 0 }
+        { "node": "Generated resume unformatted", "type": "main", "index": 0 }
       ]]
     },
-    "Generate Image (OpenAI DALL-E 3)": {
-      "main": [[
-        { "node": "Process Image Result", "type": "main", "index": 0 }
+    "OpenAI Chat Model": {
+      "ai_languageModel": [[
+        { "node": "Resume extractor", "type": "ai_languageModel", "index": 1 }
       ]]
     },
-    "Process Image Result": {
-      "main": [[
-        { "node": "Merge Media Results", "type": "main", "index": 0 }
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [[
+        { "node": "JD extractor", "type": "ai_languageModel", "index": 1 }
       ]]
     },
-    "Generate Video (OpenAI Sora 2 Pro)": {
-      "main": [[
-        { "node": "Merge Media Results", "type": "main", "index": 1 }
-      ]]
-    },
-    "Generate Video (Google Veo 3.1)": {
-      "main": [[
-        { "node": "Merge Media Results", "type": "main", "index": 2 }
-      ]]
-    },
-    "Generate Video (xAI Grok Imagine)": {
-      "main": [[
-        { "node": "Merge Media Results", "type": "main", "index": 3 }
-      ]]
-    },
-    "Generate Video (ByteDance Seedance 2.0)": {
-      "main": [[
-        { "node": "Merge Media Results", "type": "main", "index": 4 }
-      ]]
-    },
-    "Merge Media Results": {
-      "main": [[
-        { "node": "Finalize Media Output", "type": "main", "index": 0 }
-      ]]
-    },
-    "Finalize Media Output": {
-      "main": [[
-        { "node": "Send Video via Telegram", "type": "main", "index": 0 }
-      ]]
-    },
-    "Media Gate (Check Form Input)": {
-      "main": [[
-        { "node": "Build Media Prompts", "type": "main", "index": 0 }
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [[
+        { "node": "Generated resume unformatted", "type": "ai_languageModel", "index": 1 }
       ]]
     }
   },
@@ -816,7 +506,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "opencode-v1",
+  "versionId": "5c3fb3c2-16f9-4d4b-8436-14f91e2763e4",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f8bacde112c47fc748772d11341a088e5a9305096bfe1e55b37f2f4b841d2ee"
@@ -826,8 +516,6 @@
     { "updatedAt": "2026-05-03T17:43:55.457Z", "createdAt": "2026-05-03T17:43:55.457Z", "id": "Hrw0g3bj9QrnGsuo", "name": "JobDescription" },
     { "updatedAt": "2026-05-03T17:43:35.061Z", "createdAt": "2026-05-03T17:43:35.061Z", "id": "J5IbgeaiMsSFHKjm", "name": "resume" },
     { "updatedAt": "2026-04-18T14:44:56.898Z", "createdAt": "2026-04-18T14:44:56.898Z", "id": "jFWfUUdLszP2d4Uq", "name": "jobs" },
-    { "updatedAt": "2026-05-03T17:43:49.407Z", "createdAt": "2026-05-03T17:43:49.407Z", "id": "ynCkmHungfXYPtrf", "name": "optimized-resume" },
-    { "id": "opencode-media-tag", "name": "media-generation" },
-    { "id": "opencode-multimodel-tag", "name": "multi-model" }
+    { "updatedAt": "2026-05-03T17:43:49.407Z", "createdAt": "2026-05-03T17:43:49.407Z", "id": "ynCkmHungfXYPtrf", "name": "optimized-resume" }
   ]
 }
