@@ -6,176 +6,484 @@
 <title>AI Resume Optimizer — Workflow Demo</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { 
-    background: #0f0c29; font-family: 'Segoe UI', Arial, sans-serif; 
-    display: flex; justify-content: center; padding: 30px; color: #e0e0e0;
+  body {
+    background: #0f0c29;
+    font-family: 'Segoe UI', -apple-system, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 24px;
+    color: #e0e0e0;
   }
-  .demo-container { max-width: 960px; width: 100%; }
-  .header { text-align: center; padding: 24px; background: linear-gradient(135deg,#1a1a4e,#24243e); border-radius: 16px; margin-bottom: 24px; border: 1px solid rgba(102,126,234,0.3); }
-  .header h1 { font-size: 28px; background: linear-gradient(90deg,#667eea,#764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .header p { color: #9ca3af; font-size: 14px; margin-top: 6px; }
-  .controls { display: flex; gap: 12px; align-items: center; justify-content: center; margin: 16px 0; }
-  .controls button { padding: 10px 28px; border-radius: 25px; border: 1px solid rgba(102,126,234,0.4); background: rgba(102,126,234,0.15); color: #e0e0e0; cursor: pointer; font-size: 14px; font-weight: 600; transition: all .3s; }
+  .container { max-width: 1100px; width: 100%; }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #1a1a4e, #24243e);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(102,126,234,0.25);
+  }
+  .header h1 {
+    font-size: 26px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header p { color: #9ca3af; font-size: 13px; margin-top: 4px; }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .controls button {
+    padding: 10px 28px;
+    border-radius: 25px;
+    border: 1px solid rgba(102,126,234,0.35);
+    background: rgba(102,126,234,0.12);
+    color: #e0e0e0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .25s;
+  }
   .controls button:hover { background: rgba(102,126,234,0.3); transform: scale(1.03); }
-  .controls button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-  .controls .step-indicator { color: #6b7280; font-size: 14px; min-width: 120px; text-align: center; }
-  .workflow-canvas { background: #111; border-radius: 16px; padding: 24px; border: 1px solid #1e1b4b; position: relative; min-height: 500px; overflow: hidden; }
-  .node { display: flex; align-items: center; gap: 16px; padding: 16px 20px; margin: 10px 0; border-radius: 12px; background: rgba(30,27,75,0.8); border: 1.5px solid #374151; transition: all .6s; opacity: 0.3; }
-  .node.active { opacity: 1; border-color: #667eea; background: rgba(49,46,129,0.9); box-shadow: 0 0 20px rgba(102,126,234,0.2); }
-  .node.done { opacity: 1; border-color: #34d399; background: rgba(6,78,59,0.4); }
-  .node.error { opacity: 1; border-color: #f87274; background: rgba(127,29,29,0.4); }
-  .node-icon { font-size: 28px; width: 48px; text-align: center; }
-  .node-info { flex: 1; }
-  .node-title { font-size: 15px; font-weight: 600; color: #e0e0e0; }
-  .node-desc { font-size: 12px; color: #9ca3af; margin-top: 2px; }
-  .node-status { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; min-width: 80px; text-align: center; }
-  .node-status.pending { background: rgba(156,163,175,0.15); color: #6b7280; }
-  .node-status.running { background: rgba(102,126,234,0.2); color: #818cf8; }
-  .node-status.done { background: rgba(52,211,153,0.2); color: #34d399; }
-  .connection-line { width: 2px; height: 16px; background: #374151; margin-left: 38px; transition: all .6s; }
-  .connection-line.active { background: #667eea; box-shadow: 0 0 8px rgba(102,126,234,0.4); }
-  .progress-bar { height: 4px; background: #1e1b4b; border-radius: 2px; margin-bottom: 20px; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg,#667eea,#764ba2); border-radius: 2px; transition: width .8s; width: 0%; }
-  .log-panel { margin-top: 16px; background: #0a0a1a; border-radius: 12px; padding: 16px; border: 1px solid #1e1b4b; font-family: 'Courier New', monospace; font-size: 12px; height: 120px; overflow-y: auto; }
-  .log-panel div { padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-  .log-panel .time { color: #6b7280; }
-  .log-panel .msg { color: #9ca3af; }
-  .log-panel .msg.done { color: #34d399; }
-  .log-panel .msg.running { color: #818cf8; }
-  .branch-group { display: flex; gap: 20px; }
-  .branch { flex: 1; }
-  @media (max-width: 700px) { .branch-group { flex-direction: column; } }
+  .controls button:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+  .step-badge {
+    background: rgba(102,126,234,0.15);
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #a5b4fc;
+    font-weight: 600;
+    min-width: 130px;
+    text-align: center;
+  }
+
+  /* PROGRESS */
+  .progress-bar {
+    height: 5px;
+    background: #1a1a3e;
+    border-radius: 3px;
+    margin-bottom: 18px;
+    overflow: hidden;
+    border: 1px solid #2d2d5e;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2, #a78bfa);
+    border-radius: 3px;
+    transition: width .6s ease;
+    width: 0%;
+  }
+
+  /* MAIN LAYOUT */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 16px;
+  }
+
+  /* WORKFLOW CANVAS */
+  .canvas {
+    background: #0d0d20;
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid #1e1b4b;
+    min-height: 580px;
+  }
+  .node {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    margin-bottom: 0;
+    border-radius: 10px;
+    background: rgba(30,27,75,0.6);
+    border: 1.5px solid #2d2d5e;
+    transition: all .5s ease;
+    opacity: 0.25;
+    position: relative;
+  }
+  .node.visible { opacity: 1; }
+  .node.active {
+    opacity: 1;
+    border-color: #667eea;
+    background: rgba(49,46,129,0.85);
+    box-shadow: 0 0 24px rgba(102,126,234,0.15), inset 0 0 40px rgba(102,126,234,0.05);
+    transform: scale(1.02);
+  }
+  .node.done {
+    opacity: 1;
+    border-color: #34d399;
+    background: rgba(6,78,59,0.35);
+  }
+  .node .num {
+    font-size: 13px;
+    font-weight: 800;
+    color: #6b7280;
+    min-width: 28px;
+    text-align: center;
+    transition: all .4s;
+  }
+  .node.active .num { color: #a5b4fc; }
+  .node.done .num { color: #34d399; }
+  .node .icon { font-size: 24px; min-width: 36px; text-align: center; }
+  .node .info { flex: 1; min-width: 0; }
+  .node .info .title { font-size: 14px; font-weight: 600; color: #e0e0e0; }
+  .node .info .sub { font-size: 11px; color: #6b7280; margin-top: 1px; }
+  .node.active .info .sub { color: #93c5fd; }
+  .node .info .model-tag {
+    display: inline-block;
+    font-size: 9px;
+    padding: 1px 8px;
+    border-radius: 8px;
+    background: rgba(102,126,234,0.12);
+    color: #818cf8;
+    margin-top: 3px;
+  }
+  .node.done .model-tag { background: rgba(52,211,153,0.12); color: #34d399; }
+  .node .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 14px;
+    min-width: 70px;
+    text-align: center;
+    transition: all .4s;
+  }
+  .badge.pending { background: rgba(156,163,175,0.1); color: #6b7280; }
+  .badge.running { background: rgba(102,126,234,0.2); color: #818cf8; animation: pulse 1s infinite; }
+  .badge.done { background: rgba(52,211,153,0.15); color: #34d399; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+  /* CONNECTOR */
+  .connector {
+    height: 14px;
+    width: 2px;
+    background: #2d2d5e;
+    margin-left: 42px;
+    transition: all .5s;
+  }
+  .connector.active { background: #667eea; box-shadow: 0 0 8px rgba(102,126,234,0.3); }
+  .connector.done { background: #34d399; }
+
+  /* DETAIL PANEL */
+  .detail-panel {
+    background: #0d0d20;
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid #1e1b4b;
+    min-height: 580px;
+    display: flex;
+    flex-direction: column;
+  }
+  .detail-panel .placeholder {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #4b5563;
+    text-align: center;
+    gap: 8px;
+  }
+  .detail-panel .placeholder .big-icon { font-size: 48px; }
+  .detail-panel .placeholder p { font-size: 13px; }
+  .detail-content { display: none; flex-direction: column; gap: 14px; height: 100%; }
+  .detail-content.show { display: flex; }
+  .detail-content .dc-header { padding-bottom: 12px; border-bottom: 1px solid #1e1b4b; }
+  .detail-content .dc-header .dc-num {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .detail-content .dc-header .dc-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e0e0e0;
+    margin: 4px 0;
+  }
+  .detail-content .dc-header .dc-type {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 8px;
+    background: rgba(102,126,234,0.12);
+    color: #818cf8;
+    font-weight: 600;
+  }
+  .detail-content .dc-body { flex: 1; }
+  .detail-content .dc-body .dc-label {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 10px 0 4px;
+  }
+  .detail-content .dc-body .dc-desc {
+    font-size: 13px;
+    color: #d1d5db;
+    line-height: 1.6;
+  }
+  .detail-content .dc-body .dc-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 12px;
+  }
+  .detail-content .dc-body .dc-detail-row .key { color: #9ca3af; }
+  .detail-content .dc-body .dc-detail-row .val { color: #e0e0e0; font-weight: 600; }
+
+  /* LOG PANEL */
+  .log-panel {
+    margin-top: 16px;
+    background: #0a0a18;
+    border-radius: 12px;
+    padding: 14px 16px;
+    border: 1px solid #1e1b4b;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 12px;
+    height: 110px;
+    overflow-y: auto;
+  }
+  .log-panel::-webkit-scrollbar { width: 4px; }
+  .log-panel::-webkit-scrollbar-track { background: #0a0a18; }
+  .log-panel::-webkit-scrollbar-thumb { background: #2d2d5e; border-radius: 2px; }
+  .log-panel .log-entry { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+  .log-panel .log-entry:last-child { border-bottom: none; }
+  .log-panel .t { color: #4b5563; }
+  .log-panel .m { color: #9ca3af; }
+  .log-panel .m.info { color: #818cf8; }
+  .log-panel .m.ok { color: #34d399; }
+  .log-panel .m.warn { color: #fbbf24; }
+
+  @media (max-width: 800px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .detail-panel { min-height: auto; }
+    .node { padding: 10px 12px; }
+    .node .badge { min-width: 60px; font-size: 9px; }
+  }
 </style>
 </head>
 <body>
-<div class="demo-container">
-  <div class="header">
-    <h1>AI Resume Optimizer — Live Workflow Simulation</h1>
-    <p>Watch the n8n automation process a resume step-by-step</p>
-  </div>
+<div class="container">
 
-  <div class="controls">
-    <button id="playBtn" onclick="startDemo()">▶ Play Demo</button>
-    <button onclick="resetDemo()">↺ Reset</button>
-    <span class="step-indicator" id="stepIndicator">Ready</span>
-  </div>
+<div class="header">
+  <h1>AI Resume Optimizer — Workflow Demo</h1>
+  <p>Watch each n8n node execute step-by-step, from form submission to Telegram delivery</p>
+</div>
 
-  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="controls">
+  <button id="playBtn" onclick="startDemo()">▶ Play Demo</button>
+  <button onclick="resetDemo()">↺ Reset</button>
+  <span class="step-badge" id="stepBadge">⏸ Ready</span>
+</div>
 
-  <div class="workflow-canvas" id="canvas">
-    <!-- Nodes will be rendered by JS -->
-  </div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 
-  <div class="log-panel" id="logPanel">
-    <div><span class="time">[--:--:--]</span> <span class="msg">Workflow loaded. Press ▶ Play Demo to start.</span></div>
+<div class="main-grid">
+  <!-- LEFT: Workflow Nodes -->
+  <div class="canvas" id="canvas"></div>
+
+  <!-- RIGHT: Detail Panel -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="placeholder" id="placeholder">
+      <div class="big-icon">▶</div>
+      <p>Press <strong>Play Demo</strong> to watch the workflow execute one node at a time</p>
+    </div>
+    <div class="detail-content" id="detailContent"></div>
   </div>
 </div>
 
+<!-- LOG -->
+<div class="log-panel" id="logPanel"></div>
+
+</div>
+
 <script>
-const workflow = [
-  { id: 'trigger', icon: '📝', title: 'Resume &amp; JD submitted', desc: 'Form Trigger — Web form collects Resume file + JD text', branch: 'main' },
-  { id: 'extract', icon: '📂', title: 'Extract from File', desc: 'Reads PDF/DOCX binary → Plain text', branch: 'main' },
-  { id: 'resume-parser', icon: '🧠', title: 'Resume extractor', desc: 'AI Agent — Text → Structured JSON (anti-hallucination)', branch: 'main' },
-  { id: 'jd-parser', icon: '🎯', title: 'JD extractor', desc: 'AI Agent — JD → Domain, Skills, Keywords, Priority', branch: 'main' },
-  { id: 'merge', icon: '🔀', title: 'Wait for Resume &amp; JD', desc: 'Merge Node — Syncs both JSON outputs', branch: 'main' },
-  { id: 'latex-gen', icon: '✍️', title: 'Generated resume unformatted', desc: 'AI Agent — Fills LaTeX skeleton with ATS-optimized content', branch: 'main' },
-  { id: 'prepare', icon: '🔧', title: 'Prepare compilation ready', desc: 'Code (JS) — Strips markdown, extracts name, builds API body', branch: 'main' },
-  { id: 'ats-score', icon: '📊', title: 'ATS Score Agent', desc: 'AI Agent — 0-100 match score + 3 targeted gaps', branch: 'ats' },
-  { id: 'cover-letter', icon: '📝', title: 'Cover Letter Agent', desc: 'AI Agent — 5-paragraph HTML cover letter', branch: 'ats' },
-  { id: 'compile', icon: '🖨️', title: 'Compile latex code', desc: 'HTTP Request — pdflatex via ytotech.com → PDF binary', branch: 'main' },
-  { id: 'convert', icon: '📄', title: 'Compile &amp; convert to pdf', desc: 'Code (JS) — Attaches filename metadata', branch: 'main' },
-  { id: 'caption', icon: '🔗', title: 'Build Caption + Cover Letter', desc: 'Code (JS) — Score bar emoji + HTML attachment', branch: 'main' },
-  { id: 'telegram-pdf', icon: '📬', title: 'Send resume via Telegram', desc: 'Telegram — PDF with ATS score caption', branch: 'final' },
-  { id: 'telegram-cl', icon: '💌', title: 'Send Cover Letter via Telegram', desc: 'Telegram — HTML cover letter document', branch: 'final' }
+const NODES = [
+  { id:"trigger",        num:"01", icon:"📝", title:"Resume &amp; JD submitted",   type:"Form Trigger",      model:"n8n Built-in",   desc:"Web form collects the user's resume file (.pdf/.docx) and job description text. Generates a unique production URL you can share with anyone.", conn:"Connects to: Extract from File" },
+  { id:"extract",        num:"02", icon:"📂", title:"Extract from File",            type:"Extract File",      model:"n8n Built-in",   desc:"Reads the uploaded binary file and extracts plain text. Supports both PDF and DOCX formats via n8n's native extraction engine.", conn:"Connects to: Resume extractor, JD extractor" },
+  { id:"resume-parser",  num:"03", icon:"🧠", title:"Resume extractor",             type:"AI Agent",          model:"Gemini / GPT",   desc:"Parses the extracted resume text into a detailed structured JSON. Extracts identity, contact, work history, skills, education, achievements — with strict anti-hallucination rules.", conn:"Connects to: JD extractor (serial) or parallel" },
+  { id:"jd-parser",      num:"04", icon:"🎯", title:"JD extractor",                 type:"AI Agent",          model:"Gemini / GPT",   desc:"Analyzes the job description. Classifies domain, seniority level, extracts must-have vs good-to-have skills, maps responsibilities (core/secondary/strategic/operational), and ranks keywords by priority.", conn:"Connects to: Wait for Resume & JD (Merge)" },
+  { id:"merge",          num:"05", icon:"🔀", title:"Wait for Resume &amp; JD",     type:"Merge Node",        model:"—",              desc:"Syncs the two parallel JSON outputs (Resume JSON + JD JSON) into a single execution context. Ensures both are ready before proceeding to generation.", conn:"Connects to: Generated resume unformatted" },
+  { id:"latex-gen",      num:"06", icon:"✍️",  title:"Generated resume unformatted", type:"AI Agent",          model:"Gemini / GPT",   desc:"The core intelligence node. Receives both JSONs and fills a locked LaTeX skeleton. Rewrites experience bullets with action verbs, injects JD keywords naturally, reorders skills by priority, and outputs compilable LaTeX.", conn:"Splits to: Prepare compilation ready + ATS Score Agent + Cover Letter Agent" },
+  { id:"ats-score",      num:"07", icon:"📊", title:"ATS Score Agent",              type:"AI Agent",          model:"Gemini / GPT",   desc:"Calculates a 0-100 match score using a 4-factor model: Keyword Coverage (40%), Skills Alignment (30%), Experience Relevance (20%), Role Title Match (10%). Produces 3 targeted gap bullets.", conn:"Connects to: Cover Letter Agent" },
+  { id:"cover-letter",   num:"08", icon:"📝", title:"Cover Letter Agent",           type:"AI Agent",          model:"Gemini / GPT",   desc:"Writes a 5-paragraph HTML cover letter: strong hook, why this role, 2-3 quantified achievements, addresses skill gap as learning narrative, confident closing. Gmail-compatible inline CSS.", conn:"Connects to: Build Caption + Cover Letter" },
+  { id:"prepare",        num:"09", icon:"🔧", title:"Prepare compilation ready",    type:"Code (JavaScript)", model:"—",              desc:"Cleans the LLM output: strips markdown fences (```latex), slices from \\\\documentclass to \\\\end{document}, extracts candidate name from Resume JSON, sanitizes filename, and JSON.stringifys the request body.", conn:"Connects to: Compile latex code" },
+  { id:"compile",        num:"10", icon:"🖨️", title:"Compile latex code",           type:"HTTP Request",      model:"latex.ytotech.com", desc:"POSTs the LaTeX source to the free ytotech compilation API. Specifies pdflatex compiler. Receives compiled PDF binary as response. Configured with retry-on-fail (3 retries, 5s wait).", conn:"Connects to: Compile & convert to pdf file" },
+  { id:"convert",        num:"11", icon:"📄", title:"Compile &amp; convert to pdf", type:"Code (JavaScript)", model:"—",              desc:"Passes the binary PDF through untouched while attaching filename metadata (FirstName_LastName_Resume.pdf) and candidateName for the Telegram caption.", conn:"Connects to: Build Caption + Cover Letter" },
+  { id:"caption",        num:"12", icon:"🔗", title:"Build Caption + Cover Letter", type:"Code (JavaScript)", model:"—",              desc:"Parses ATS Score Agent output, builds a visual score bar (🟩🟩🟩🟩⬜⬜), constructs Telegram caption with emoji indicators, and attaches the HTML cover letter as a binary file.", conn:"Splits to: Send resume via telegram + Send Cover Letter via Telegram" },
+  { id:"telegram-pdf",   num:"13", icon:"📬", title:"Send resume via Telegram",    type:"Telegram",          model:"Telegram Bot API", desc:"Sends the compiled PDF as a Telegram document with caption showing the ATS score, recommendation, and top 3 gaps to address. Uses the configured Chat ID.", conn:"Final node" },
+  { id:"telegram-cl",    num:"14", icon:"💌", title:"Send Cover Letter via Telegram", type:"Telegram",       model:"Telegram Bot API", desc:"Sends the HTML cover letter as a Telegram document alongside the resume PDF. Both files arrive simultaneously for a complete delivery experience.", conn:"Final node" }
 ];
 
-const logs = [
-  { time: '00:00:01', msg: '📝 Form submitted — Resume + JD received', cls: 'done' },
-  { time: '00:00:02', msg: '📂 Extracting text from resume file...', cls: 'running' },
-  { time: '00:00:03', msg: '📂 Resume text extracted successfully', cls: 'done' },
-  { time: '00:00:04', msg: '🧠 Sending resume to AI parser (Gemini/GPT)...', cls: 'running' },
-  { time: '00:00:08', msg: '🧠 Resume JSON parsed — identity, skills, history extracted', cls: 'done' },
-  { time: '00:00:09', msg: '🎯 Sending JD to AI analyzer...', cls: 'running' },
-  { time: '00:00:13', msg: '🎯 JD analyzed — domain, keywords, priorities identified', cls: 'done' },
-  { time: '00:00:14', msg: '🔀 Both JSONs synced at merge node', cls: 'done' },
-  { time: '00:00:15', msg: '✍️ Generating ATS-optimized LaTeX resume...', cls: 'running' },
-  { time: '00:00:22', msg: '✍️ LaTeX resume generated — action verbs + JD keywords injected', cls: 'done' },
-  { time: '00:00:23', msg: '📊 Calculating ATS match score...', cls: 'running' },
-  { time: '00:00:26', msg: '📊 ATS Score: 85/100 — Strong Match', cls: 'done' },
-  { time: '00:00:27', msg: '📝 Writing personalized cover letter...', cls: 'running' },
-  { time: '00:00:32', msg: '📝 Cover letter generated — 340 words, HTML format', cls: 'done' },
-  { time: '00:00:33', msg: '🔧 Cleaning LaTeX — stripping markdown fences', cls: 'running' },
-  { time: '00:00:34', msg: '🔧 Building API request for pdfLaTeX compiler', cls: 'done' },
-  { time: '00:00:35', msg: '🖨️ Sending LaTeX to compilation API...', cls: 'running' },
-  { time: '00:00:40', msg: '🖨️ PDF compiled successfully — 3 pages', cls: 'done' },
-  { time: '00:00:41', msg: '📄 Attaching filename: Nitin_Kumar_Resume.pdf', cls: 'done' },
-  { time: '00:00:42', msg: '🔗 Building Telegram caption with ATS score bar', cls: 'done' },
-  { time: '00:00:43', msg: '📬 Sending resume PDF via Telegram...', cls: 'running' },
-  { time: '00:00:44', msg: '💌 Sending cover letter HTML via Telegram...', cls: 'running' },
-  { time: '00:00:45', msg: '✅ All deliveries complete! Check Telegram.', cls: 'done' }
+const LOGS = [
+  { t:"00:00", m:"Workflow started — form submitted with Resume + JD", s:"info" },
+  { t:"00:01", m:"📝 Form trigger received payload", s:"info" },
+  { t:"00:02", m:"📂 Extracting text from uploaded file (PDF/DOCX)", s:"info" },
+  { t:"00:03", m:"📂 Text extraction complete — sending to Resume parser", s:"ok" },
+  { t:"00:04", m:"🧠 Resume parser: analyzing document structure", s:"info" },
+  { t:"00:07", m:"🧠 Resume JSON ready — identity, skills, history extracted", s:"ok" },
+  { t:"00:08", m:"🎯 JD parser: analyzing job description", s:"info" },
+  { t:"00:12", m:"🎯 JD analyzed — domain, keywords, priorities identified", s:"ok" },
+  { t:"00:13", m:"🔀 Merge node: both JSONs synchronized", s:"ok" },
+  { t:"00:14", m:"✍️ LaTeX generator: writing ATS-optimized resume", s:"info" },
+  { t:"00:20", m:"✍️ LaTeX generated — action verbs + JD keywords injected", s:"ok" },
+  { t:"00:21", m:"📊 ATS Score Agent: calculating match score", s:"info" },
+  { t:"00:24", m:"📊 Score: 85/100 — Strong Match — 3 gaps identified", s:"ok" },
+  { t:"00:25", m:"📝 Cover Letter Agent: writing personalized HTML letter", s:"info" },
+  { t:"00:30", m:"📝 Cover letter ready — 340 words, Gmail-compatible HTML", s:"ok" },
+  { t:"00:31", m:"🔧 Cleaning LaTeX output — stripping markdown fences", s:"info" },
+  { t:"00:32", m:"🔧 Building API request body for pdfLaTeX compiler", s:"ok" },
+  { t:"00:33", m:"🖨️ Sending LaTeX to compilation API (ytotech.com)", s:"info" },
+  { t:"00:38", m:"🖨️ PDF compiled successfully — 3 pages", s:"ok" },
+  { t:"00:39", m:"📄 Attaching filename: Nitin_Kumar_Resume.pdf", s:"ok" },
+  { t:"00:40", m:"🔗 Building Telegram caption with ATS score bar + cover letter", s:"info" },
+  { t:"00:41", m:"🔗 Caption ready — sending to Telegram nodes", s:"ok" },
+  { t:"00:42", m:"📬 Sending resume PDF via Telegram...", s:"info" },
+  { t:"00:43", m:"💌 Sending cover letter HTML via Telegram...", s:"info" },
+  { t:"00:44", m:"✅ Both deliveries complete! Check Telegram.", s:"ok" }
 ];
 
-let currentStep = -1;
+const STEP_NODES = [
+  [],                    // step 0
+  ["trigger"],           // 1
+  ["trigger"],           // 2
+  ["extract"],           // 3
+  ["extract"],           // 4
+  ["resume-parser"],     // 5
+  ["resume-parser"],     // 6
+  ["jd-parser"],         // 7
+  ["jd-parser"],         // 8
+  ["merge"],             // 9
+  ["latex-gen"],          // 10
+  ["latex-gen"],          // 11
+  ["ats-score"],         // 12
+  ["ats-score"],         // 13
+  ["cover-letter"],      // 14
+  ["cover-letter"],      // 15
+  ["prepare"],           // 16
+  ["prepare"],           // 17
+  ["compile"],           // 18
+  ["compile"],           // 19
+  ["convert"],           // 20
+  ["caption"],           // 21
+  ["caption"],           // 22
+  ["telegram-pdf"],      // 23
+  ["telegram-cl"],       // 24
+  ["telegram-pdf","telegram-cl"], // 25
+  ["telegram-pdf","telegram-cl"]  // 26
+];
+
+const DONE_NODES = [
+  [],
+  ["trigger"],
+  ["trigger"],
+  ["extract"],
+  ["trigger","extract"],
+  ["trigger","extract","resume-parser"],
+  ["trigger","extract","resume-parser"],
+  ["trigger","extract","jd-parser"],
+  ["trigger","extract","resume-parser","jd-parser"],
+  ["trigger","extract","resume-parser","jd-parser","merge"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","ats-score"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","ats-score"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","ats-score","cover-letter"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","ats-score","cover-letter"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","prepare"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","prepare"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","prepare","compile"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","prepare","compile"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","prepare","compile","convert"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","prepare","compile","convert","caption"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","prepare","compile","convert","caption"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","prepare","compile","convert","caption","telegram-pdf"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","prepare","compile","convert","caption","telegram-cl"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","prepare","compile","convert","caption","telegram-pdf","telegram-cl"],
+  ["trigger","extract","resume-parser","jd-parser","merge","latex-gen","prepare","compile","convert","caption","telegram-pdf","telegram-cl"]
+];
+
+let stepIdx = -1;
 let timer = null;
 
-function renderNodes() {
+function renderCanvas() {
   const canvas = document.getElementById('canvas');
   let html = '';
-  let mainNodes = workflow.filter(n => n.branch === 'main');
-  let atsBranch = workflow.filter(n => n.branch === 'ats');
-  let finalNodes = workflow.filter(n => n.branch === 'final');
-  
-  html += '<div class="branch-group">';
-  html += '<div class="branch">';
-  mainNodes.forEach(n => html += renderNode(n, 'pending'));
-  html += '</div><div class="branch">';
-  html += renderNode(atsBranch[0], 'pending');
-  html += '<div class="connection-line" id="cl-ats-cover"></div>';
-  html += renderNode(atsBranch[1], 'pending');
-  html += '</div></div>';
-  
-  html += '<div class="branch-group">';
-  html += '<div class="branch">';
-  finalNodes.forEach(n => html += renderNode(n, 'pending'));
-  html += '</div></div>';
-  
+  NODES.forEach((n, i) => {
+    html += `
+      <div class="node" id="n-${n.id}">
+        <div class="num">${n.num}</div>
+        <div class="icon">${n.icon}</div>
+        <div class="info">
+          <div class="title">${n.title}</div>
+          <div class="sub">${n.type}</div>
+          ${n.model !== '—' ? `<span class="model-tag">${n.model}</span>` : ''}
+        </div>
+        <div class="badge pending" id="b-${n.id}">⏸ Pending</div>
+      </div>`;
+    if (i < NODES.length - 1) {
+      html += `<div class="connector" id="c-${i}"></div>`;
+    }
+  });
   canvas.innerHTML = html;
 }
 
-function renderNode(node, status) {
-  return `
-    <div class="node ${status}" id="node-${node.id}" data-branch="${node.branch}">
-      <div class="node-icon">${node.icon}</div>
-      <div class="node-info">
-        <div class="node-title">${node.title}</div>
-        <div class="node-desc">${node.desc}</div>
-      </div>
-      <div class="node-status ${status}" id="status-${node.id}">${status === 'done' ? '✅ Done' : status === 'running' ? '⏳ Running...' : '⏸ Pending'}</div>
-    </div>
-    ${node.id !== 'telegram-cl' ? '<div class="connection-line" id="conn-' + node.id + '"></div>' : ''}
-  `;
-}
-
 function setNodeState(id, state) {
-  const node = document.getElementById('node-' + id);
-  if (!node) return;
-  node.className = 'node ' + state;
-  const status = document.getElementById('status-' + id);
-  if (status) {
-    status.className = 'node-status ' + state;
-    status.textContent = state === 'done' ? '✅ Done' : state === 'running' ? '⏳ Running...' : state === 'error' ? '❌ Error' : '⏸ Pending';
+  const el = document.getElementById('n-' + id);
+  if (!el) return;
+  el.className = 'node visible ' + state;
+  const badge = document.getElementById('b-' + id);
+  if (badge) {
+    badge.className = 'badge ' + state;
+    badge.textContent = state === 'done' ? '✅ Done' : state === 'active' ? '⏳ Running...' : '⏸ Pending';
   }
 }
 
-function setConnActive(id) {
-  const conn = document.getElementById('conn-' + id);
-  if (conn) conn.classList.add('active');
+function setConn(idx, state) {
+  const el = document.getElementById('c-' + idx);
+  if (el) { el.className = 'connector ' + state; }
 }
 
-function addLog(time, msg, cls) {
+function showDetail(nodeId) {
+  const node = NODES.find(n => n.id === nodeId);
+  const placeholder = document.getElementById('placeholder');
+  const content = document.getElementById('detailContent');
+  if (!node) { placeholder.style.display = 'flex'; content.classList.remove('show'); return; }
+  placeholder.style.display = 'none';
+  content.classList.add('show');
+  content.innerHTML = `
+    <div class="dc-header">
+      <div class="dc-num">NODE ${node.num}</div>
+      <div class="dc-title">${node.icon} ${node.title}</div>
+      <span class="dc-type">${node.type}</span>
+    </div>
+    <div class="dc-body">
+      <div class="dc-label">Description</div>
+      <div class="dc-desc">${node.desc}</div>
+      <div class="dc-label">Details</div>
+      <div class="dc-detail-row"><span class="key">Type</span><span class="val">${node.type}</span></div>
+      <div class="dc-detail-row"><span class="key">AI Model</span><span class="val">${node.model}</span></div>
+      <div class="dc-detail-row"><span class="key">Connection</span><span class="val">${node.conn}</span></div>
+    </div>`;
+}
+
+function addLog(t, m, s) {
   const panel = document.getElementById('logPanel');
   const div = document.createElement('div');
-  div.innerHTML = `<span class="time">[${time}]</span> <span class="msg ${cls}">${msg}</span>`;
+  div.className = 'log-entry';
+  div.innerHTML = `<span class="t">[${t}]</span> <span class="m ${s}">${m}</span>`;
   panel.appendChild(div);
   panel.scrollTop = panel.scrollHeight;
 }
@@ -184,129 +492,78 @@ function startDemo() {
   if (timer) return;
   document.getElementById('playBtn').disabled = true;
   document.getElementById('playBtn').textContent = '⏳ Running...';
-  currentStep = -1;
-  advanceStep();
+  stepIdx = -1;
+  document.getElementById('logPanel').innerHTML = '';
+  advance();
 }
 
-function advanceStep() {
-  currentStep++;
-  if (currentStep >= logs.length) {
-    done();
-    return;
-  }
+function advance() {
+  stepIdx++;
+  if (stepIdx >= LOGS.length) { finish(); return; }
 
-  const log = logs[currentStep];
-  const pct = Math.round((currentStep / logs.length) * 100);
+  const log = LOGS[stepIdx];
+  const pct = Math.round((stepIdx / LOGS.length) * 100);
   document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('stepIndicator').textContent = `Step ${currentStep + 1}/${logs.length}`;
+  document.getElementById('stepBadge').textContent = `Step ${stepIdx + 1}/${LOGS.length}`;
 
-  addLog(log.time, log.msg, log.cls);
+  addLog(log.t, log.m, log.s);
 
-  // Map log index to node states
-  const activeNodes = [
-    [], // 0
-    ['trigger'], // 1
-    ['trigger'], // 2
-    ['extract'], // 3
-    ['extract'], // 4
-    ['resume-parser'], // 5
-    ['resume-parser'], // 6
-    ['jd-parser'], // 7
-    ['jd-parser'], // 8
-    ['merge'], // 9
-    ['latex-gen'], // 10
-    ['latex-gen'], // 11
-    ['ats-score'], // 12
-    ['ats-score'], // 13
-    ['cover-letter'], // 14
-    ['cover-letter'], // 15
-    ['prepare'], // 16
-    ['prepare'], // 17
-    ['compile'], // 18
-    ['compile'], // 19
-    ['convert'], // 20
-    ['caption'], // 21
-    ['telegram-pdf'], // 22
-    ['telegram-cl'], // 23
-    ['telegram-pdf','telegram-cl'], // 24
-    ['telegram-pdf','telegram-cl'], // 25
-  ];
+  // Update node states
+  const activeNodes = STEP_NODES[stepIdx] || [];
+  const doneNodes = DONE_NODES[stepIdx] || [];
 
-  const doneNodes = [
-    [], // 0
-    ['trigger'], // 1
-    ['trigger'], // 2
-    ['extract'], // 3
-    ['trigger','extract'], // 4
-    ['trigger','extract','resume-parser'], // 5
-    ['trigger','extract','resume-parser'], // 6
-    ['trigger','extract','jd-parser'], // 7
-    ['trigger','extract','resume-parser','jd-parser'], // 8
-    ['trigger','extract','resume-parser','jd-parser','merge'], // 9
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen'], // 10
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen'], // 11
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','ats-score'], // 12
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','ats-score'], // 13
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','ats-score','cover-letter'], // 14
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','ats-score','cover-letter'], // 15
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare'], // 16
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare'], // 17
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile'], // 18
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile'], // 19
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert'], // 20
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert','caption'], // 21
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert','caption','telegram-pdf'], // 22
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert','caption','telegram-cl'], // 23
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert','caption','telegram-pdf','telegram-cl'], // 24
-    ['trigger','extract','resume-parser','jd-parser','merge','latex-gen','prepare','compile','convert','caption','telegram-pdf','telegram-cl'], // 25
-  ];
+  NODES.forEach((n, i) => {
+    if (doneNodes.includes(n.id)) {
+      setNodeState(n.id, 'done');
+      if (i > 0) setConn(i - 1, 'done');
+    } else if (activeNodes.includes(n.id)) {
+      setNodeState(n.id, 'active');
+      showDetail(n.id);
+      if (i > 0) setConn(i - 1, 'active');
+    } else {
+      setNodeState(n.id, 'visible');
+    }
+  });
 
-  // Set active nodes
-  if (activeNodes[currentStep]) {
-    workflow.forEach(n => {
-      if (doneNodes[currentStep] && doneNodes[currentStep].includes(n.id)) {
-        setNodeState(n.id, 'done');
-      } else if (activeNodes[currentStep].includes(n.id)) {
-        setNodeState(n.id, 'running');
-      } else {
-        setNodeState(n.id, 'pending');
-      }
-    });
-  }
+  // Show first node's detail on step 1
+  if (stepIdx === 1) showDetail('trigger');
 
-  // Active connections
-  if (currentStep > 0 && currentStep < 9) {
-    const connMap = ['trigger','trigger','extract','extract','resume-parser','jd-parser','jd-parser','merge'];
-    if (connMap[currentStep-1]) setConnActive(connMap[currentStep-1]);
-  }
-
-  timer = setTimeout(advanceStep, currentStep < 3 ? 800 : currentStep < 10 ? 1000 : currentStep < 18 ? 1200 : 600);
+  // Different delays per step (slower for active processing, faster for transitions)
+  const delays = [500, 800, 800, 600, 1000, 800, 1000, 800, 600, 1200, 800, 1000, 800, 1000, 800, 800, 600, 800, 1000, 600, 600, 800, 600, 800, 800, 600, 800];
+  const delay = delays[stepIdx] || 700;
+  timer = setTimeout(advance, delay);
 }
 
-function done() {
-  clearTimeout(timer);
-  timer = null;
+function finish() {
+  clearTimeout(timer); timer = null;
   document.getElementById('progressFill').style.width = '100%';
-  document.getElementById('stepIndicator').textContent = '✅ Complete!';
+  document.getElementById('stepBadge').textContent = '✅ Complete!';
   document.getElementById('playBtn').disabled = false;
   document.getElementById('playBtn').textContent = '▶ Replay';
-  addLog('00:00:45', '🎉 Workflow complete! PDF + Cover Letter + ATS Score sent to Telegram.', 'done');
+  addLog('00:45', '🎉 Workflow complete! PDF + Cover Letter + ATS Score sent to Telegram.', 'ok');
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('detailContent').classList.add('show');
+  const lastNode = NODES[NODES.length - 1];
+  showDetail(lastNode.id);
 }
 
 function resetDemo() {
-  clearTimeout(timer);
-  timer = null;
-  currentStep = -1;
+  clearTimeout(timer); timer = null;
+  stepIdx = -1;
   document.getElementById('playBtn').disabled = false;
   document.getElementById('playBtn').textContent = '▶ Play Demo';
-  document.getElementById('stepIndicator').textContent = 'Ready';
+  document.getElementById('stepBadge').textContent = '⏸ Ready';
   document.getElementById('progressFill').style.width = '0%';
-  document.getElementById('logPanel').innerHTML = '<div><span class="time">[--:--:--]</span> <span class="msg">Workflow loaded. Press ▶ Play Demo to start.</span></div>';
-  workflow.forEach(n => setNodeState(n.id, 'pending'));
-  document.querySelectorAll('.connection-line').forEach(el => el.classList.remove('active'));
+  document.getElementById('logPanel').innerHTML = '';
+  document.getElementById('placeholder').style.display = 'flex';
+  document.getElementById('detailContent').classList.remove('show');
+  NODES.forEach((n, i) => {
+    setNodeState(n.id, 'visible');
+    if (i < NODES.length - 1) setConn(i, '');
+  });
 }
 
-renderNodes();
+renderCanvas();
 </script>
 </body>
 </html>
