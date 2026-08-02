@@ -4,7 +4,7 @@
 ---
 
 <p align="center">
-  <img src="assets/overview-banner.svg" alt="ATS Torture Chamber — Overview Banner" width="800" />
+  <img src="assets/Screenshot 2026-08-02 230803.png" alt="ATS Torture Chamber — Overview Banner" width="800" />
 </p>
 
 <p align="center">
