@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1360" viewBox="0 0 1200 1360">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/><stop offset="50%" style="stop-color:#1a1a4e"/><stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea"/><stop offset="50%" style="stop-color:#764ba2"/><stop offset="100%" style="stop-color:#f093fb"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#34d399"/><stop offset="100%" style="stop-color:#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="red" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#fb7185"/><stop offset="100%" style="stop-color:#f97316"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+      .title { font:bold 40px Arial,sans-serif; fill:#ffffff; }
+      .sub { font:20px Arial,sans-serif; fill:#9ca3af; }
+      .step-num { font:bold 18px Arial,sans-serif; fill:#ffffff; }
+      .step-name { font:bold 24px Arial,sans-serif; fill:#e5e7eb; }
+      .step-desc { font:16px Arial,sans-serif; fill:#9ca3af; }
+      .box { fill:rgba(30,27,75,0.6); stroke:#2d2d5e; stroke-width:1.5; rx:12; }
+      .box-accent { stroke:url(#accent); stroke-width:2; }
+      .conn { stroke:#4b5563; stroke-width:2.5; }
+      .loop { stroke:#fb7185; stroke-width:2.5; stroke-dasharray:7 6; fill:none; }
+      .footer { font:17px Arial,sans-serif; fill:#6b7280; }
+      .badge { fill:url(#accent); rx:22; }
+      .badge-t { font:bold 20px Arial,sans-serif; fill:#0f0c29; text-anchor:middle; }
+      .tag { font:bold 15px Arial,sans-serif; fill:#818cf8; }
+    </style>
+  </defs>
+  <rect width="1200" height="1360" fill="url(#bg)" rx="16"/>
+
+  <!-- Header -->
+  <text x="600" y="70" text-anchor="middle" class="title">Resume → ATS 95 → Telegram</text>
+  <text x="600" y="110" text-anchor="middle" class="sub">The whole circus, in one diagram — "Optimize Resume As Per JD" (n8n)</text>
+  <rect x="150" y="130" width="900" height="3" rx="1.5" fill="#2d2d5e"/>
+
+  <!-- STEP 1: Input -->
+  <g>
+    <rect x="150" y="160" width="900" height="80" class="box box-accent"/>
+    <rect x="150" y="160" width="56" height="80" rx="12" fill="url(#accent)"/>
+    <rect x="150" y="160" width="56" height="80" rx="12" fill="none"/>
+    <text x="178" y="213" class="badge-t">1</text>
+    <text x="230" y="196" class="step-name">📥 Input — Upload Files</text>
+    <text x="230" y="222" class="step-desc">Web form: your Resume (PDF) + the Job Description (text) → n8n form trigger</text>
+  </g>
+  <line x1="600" y1="240" x2="600" y2="272" class="conn"/>
+  <polygon points="590,268 600,282 610,268" fill="#4b5563"/>
+
+  <!-- STEP 2: Parse -->
+  <g>
+    <rect x="150" y="282" width="900" height="100" class="box"/>
+    <rect x="150" y="282" width="56" height="100" rx="12" fill="url(#accent)"/>
+    <text x="178" y="339" class="badge-t">2</text>
+    <text x="230" y="316" class="step-name">🧠 Parse &amp; Extract</text>
+    <text x="230" y="342" class="step-desc">Two LLM extractors read both files, then merge</text>
+    <rect x="560" y="300" width="220" height="34" rx="8" fill="rgba(102,126,234,0.15)" stroke="#667eea" stroke-width="1.2"/>
+    <text x="670" y="322" text-anchor="middle" class="step-desc" fill="#93c5fd">Resume extractor (LLM)</text>
+    <rect x="798" y="300" width="220" height="34" rx="8" fill="rgba(102,126,234,0.15)" stroke="#667eea" stroke-width="1.2"/>
+    <text x="908" y="322" text-anchor="middle" class="step-desc" fill="#93c5fd">JD extractor (LLM)</text>
+  </g>
+  <line x1="600" y1="382" x2="600" y2="414" class="conn"/>
+  <polygon points="590,410 600,424 610,410" fill="#4b5563"/>
+
+  <!-- STEP 3: Rewrite -->
+  <g>
+    <rect x="150" y="424" width="900" height="80" class="box box-accent"/>
+    <rect x="150" y="424" width="56" height="80" rx="12" fill="url(#accent)"/>
+    <text x="178" y="477" class="badge-t">3</text>
+    <text x="230" y="460" class="step-name">✍️ Rewrite — Writer LLM</text>
+    <text x="230" y="486" class="step-desc">Generates a fresh resume engineered to match the JD's keywords</text>
+  </g>
+
+  <!-- LOOP ARROW: from ATS Check back up to here -->
+  <path d="M 1065 870 L 1120 870 L 1120 464 L 1058 464" class="loop"/>
+  <polygon points="1052,464 1066,458 1062,470" fill="#fb7185"/>
+
+  <line x1="600" y1="504" x2="600" y2="536" class="conn"/>
+  <polygon points="590,532 600,546 610,532" fill="#4b5563"/>
+
+  <!-- STEP 4: Compile -->
+  <g>
+    <rect x="150" y="546" width="900" height="80" class="box"/>
+    <rect x="150" y="546" width="56" height="80" rx="12" fill="url(#accent)"/>
+    <text x="178" y="599" class="badge-t">4</text>
+    <text x="230" y="582" class="step-name">🖨️ Compile — LaTeX → PDF</text>
+    <text x="230" y="608" class="step-desc">Prepare LaTeX → compile via ytotech.com API → convert to real PDF</text>
+  </g>
+  <line x1="600" y1="626" x2="600" y2="658" class="conn"/>
+  <polygon points="590,654 600,668 610,654" fill="#4b5563"/>
+
+  <!-- STEP 5: Score -->
+  <g>
+    <rect x="150" y="668" width="900" height="80" class="box"/>
+    <rect x="150" y="668" width="56" height="80" rx="12" fill="url(#accent)"/>
+    <text x="178" y="721" class="badge-t">5</text>
+    <text x="230" y="704" class="step-name">🧪 Score — ATS Score Agent</text>
+    <text x="230" y="730" class="step-desc">LLM judges the resume against the JD and returns a score</text>
+  </g>
+  <line x1="600" y1="748" x2="600" y2="780" class="conn"/>
+  <polygon points="590,776 600,790 610,776" fill="#4b5563"/>
+
+  <!-- STEP 6: Decision -->
+  <g>
+    <rect x="150" y="790" width="900" height="110" class="box box-accent"/>
+    <rect x="150" y="790" width="56" height="110" rx="12" fill="url(#accent)"/>
+    <text x="178" y="848" class="badge-t">6</text>
+    <text x="230" y="826" class="step-name">⚖️ ATS Check — Score ≥ 95?</text>
+    <text x="230" y="852" class="step-desc">The gatekeeper. No mercy, no exceptions.</text>
+    <rect x="560" y="800" width="220" height="36" rx="9" fill="rgba(52,211,153,0.12)" stroke="url(#green)" stroke-width="1.5"/>
+    <text x="670" y="823" text-anchor="middle" class="step-desc" fill="#6ee7b7">YES → keep going</text>
+    <rect x="798" y="800" width="220" height="36" rx="9" fill="rgba(251,113,133,0.12)" stroke="url(#red)" stroke-width="1.5"/>
+    <text x="908" y="823" text-anchor="middle" class="step-desc" fill="#fda4af">NO → loop back ⬆</text>
+    <text x="908" y="858" text-anchor="middle" class="tag">REBUILD MODE · max 10 rounds</text>
+  </g>
+  <line x1="600" y1="900" x2="600" y2="932" class="conn"/>
+  <polygon points="590,928 600,942 610,928" fill="#4b5563"/>
+
+  <!-- STEP 7: Cover letter -->
+  <g>
+    <rect x="150" y="942" width="900" height="80" class="box"/>
+    <rect x="150" y="942" width="56" height="80" rx="12" fill="url(#accent)"/>
+    <text x="178" y="995" class="badge-t">7</text>
+    <text x="230" y="978" class="step-name">💌 Cover Letter Generator</text>
+    <text x="230" y="1004" class="step-desc">Writer LLM drafts a 5-paragraph cover letter tailored to the JD</text>
+  </g>
+  <line x1="600" y1="1022" x2="600" y2="1054" class="conn"/>
+  <polygon points="590,1050 600,1064 610,1050" fill="#4b5563"/>
+
+  <!-- STEP 8: Deliver -->
+  <g>
+    <rect x="150" y="1064" width="900" height="80" class="box box-accent"/>
+    <rect x="150" y="1064" width="56" height="80" rx="12" fill="url(#accent)"/>
+    <text x="178" y="1117" class="badge-t">8</text>
+    <text x="230" y="1100" class="step-name">📨 Deliver — Telegram</text>
+    <text x="230" y="1126" class="step-desc">Both files land in your chat — done, go apply.</text>
+    <rect x="560" y="1082" width="220" height="34" rx="8" fill="rgba(102,126,234,0.15)" stroke="#667eea" stroke-width="1.2"/>
+    <text x="670" y="1104" text-anchor="middle" class="step-desc" fill="#93c5fd">YourName_resume.pdf</text>
+    <rect x="798" y="1082" width="220" height="34" rx="8" fill="rgba(102,126,234,0.15)" stroke="#667eea" stroke-width="1.2"/>
+    <text x="908" y="1104" text-anchor="middle" class="step-desc" fill="#93c5fd">YourName_coverletter.html</text>
+  </g>
+
+  <!-- Footer -->
+  <rect x="150" y="1185" width="900" height="2" fill="#2d2d5e"/>
+  <text x="600" y="1230" text-anchor="middle" class="footer">n8n · OpenRouter (Gemini / OpenAI / GPT) · LaTeX (ytotech.com) · Telegram</text>
+  <text x="600" y="1262" text-anchor="middle" class="footer">Cost: ₹0 · Runtime: ~60-90s · Loop target: ATS Score 95+</text>
+  <text x="600" y="1310" text-anchor="middle" class="tag">github.com/nitinkumar30/aiResumeOptimizer</text>
+</svg>
