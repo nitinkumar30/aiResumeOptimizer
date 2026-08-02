@@ -1,8 +1,20 @@
 {
   "project": "AI Resume Optimizer",
   "version": "2.0.0",
-  "description": "n8n workflow for ATS-optimized resume generation with multi-model AI support",
+  "description": "n8n workflow for ATS-optimized resume generation with an endless rebuild loop (target >= 95/100), JD keyword auto-injection, LaTeX PDF compilation, cover letter generation, and Telegram delivery.",
   "models": {
+    "openrouter": {
+      "default": "openai/gpt-oss-20b:free",
+      "notes": "Current default provider. All 6 model nodes are wired to OpenRouter.",
+      "temperature": {
+        "resume_extractor": 0.2,
+        "jd_extractor": 0.2,
+        "writer": 0.5,
+        "ats_score_agent": 0.2,
+        "cover_letter_agent": 0.6,
+        "ats_score_agent_before": 0.2
+      }
+    },
     "google_gemini": {
       "parsing": ["models/gemini-2.0-flash-lite-001", "models/gemini-2.5-flash-image"],
       "generation": ["models/gemini-2.5-flash-image", "models/gemini-3.1-flash-image-preview", "models/gemini-3-pro-image-preview"],
@@ -12,16 +24,20 @@
       "parsing": ["gpt-5-mini", "gpt-5.4-image-2"],
       "generation": ["gpt-5.4-image-2"],
       "scoring": ["gpt-5.4-image-2"]
-    },
-    "openrouter": {
-      "auto_routing": ["openrouter/auto"]
     }
   },
   "workflow": {
-    "total_nodes": 19,
-    "core_agents": ["Resume extractor", "JD extractor", "Generated resume unformatted", "ATS Score Agent", "Cover Letter Agent"],
-    "code_nodes": ["Prepare compilation ready", "Compile & convert to pdf file", "Build Caption + Cover Letter"],
-    "delivery": ["Send resume via telegram", "Send Cover Letter via Telegram"]
+    "total_nodes": 23,
+    "core_agents": ["Resume extractor", "JD extractor", "Generated resume unformatted", "ATS Score Agent", "ATS Score Agent (Before)", "Cover Letter Agent"],
+    "code_nodes": ["Prepare compilation ready", "Compile & convert to pdf file", "Build Caption + Cover Letter", "ATS Loop Guard", "ATS Check"],
+    "loop_nodes": ["ATS Loop Guard", "Generated resume unformatted", "ATS Score Agent", "ATS Check", "If ATS Score >= 95"],
+    "delivery": ["Send resume via telegram", "Send Cover Letter via Telegram"],
+    "ats_loop": {
+      "target_score": 95,
+      "max_iterations": 10,
+      "exit_on_null_score": true,
+      "rebuild_mode": "enabled (writer prompt switches to gap-fix instructions when iteration > 1)"
+    }
   },
   "features": {
     "ats_scoring": {
@@ -31,10 +47,36 @@
         {"name": "Skills Alignment", "weight": 0.30},
         {"name": "Experience Relevance", "weight": 0.20},
         {"name": "Role Title Match", "weight": 0.10}
-      ]
+      ],
+      "scored_both": true
     },
-    "cover_letter": {"enabled": true, "format": "HTML with inline CSS"},
-    "parallel_processing": {"resume_and_jd": true},
+    "jd_keyword_auto_injection": {
+      "enabled": true,
+      "location": "Prepare compilation ready node",
+      "mechanism": "Missing JD keywords auto-injected into the Skills section as a JD-Matched Keywords bullet"
+    },
+    "cover_letter": {"enabled": true, "format": "HTML with inline CSS", "delivery_filename": "{candidatename}_coverletter.html"},
+    "filename_conventions": {
+      "base": "{candidatename} (candidate name only, sanitized, spaces -> underscores)",
+      "resume": "{candidatename}_resume.pdf",
+      "cover_letter": "{candidatename}_coverletter.html"
+    },
+    "latex_compiler": {
+      "endpoint": "https://latex.ytotech.com/builds/sync",
+      "compiler": "pdflatex",
+      "retry_on_fail": true,
+      "wait_between_tries_ms": 5000
+    },
     "error_handling": {"retry_on_fail": true, "max_retries": 5}
+  },
+  "secrets": {
+    "note": "Exported workflow JSON is scrubbed. Replace these placeholders after import.",
+    "placeholders": {
+      "YOUR_FORM_WEBHOOK_ID": "Form trigger webhookId (Resume & JD submitted node)",
+      "YOUR_TELEGRAM_CHAT_ID": "Telegram chat/group/channel ID (both Telegram nodes)",
+      "YOUR_TELEGRAM_NODE_WEBHOOK_ID": "Telegram node webhookId (not used for sendDocument; any UUID works)",
+      "YOUR_TELEGRAM_CREDENTIAL_ID": "Telegram credential id (both Telegram nodes)",
+      "YOUR_OPENROUTER_CREDENTIAL_ID": "OpenRouter credential id (all 6 model nodes)"
+    }
   }
 }
