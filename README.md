@@ -3,66 +3,45 @@
 
 ---
 
-```
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                                                                              ║
-║    ██████╗ ██████╗ ████████╗██╗███╗   ███╗██╗███████╗███████╗               ║
-║   ██╔═══██╗██╔══██╗╚══██╔══╝██║████╗ ████║██║██╔════╝██╔════╝               ║
-║   ██║   ██║██████╔╝   ██║   ██║██╔████╔██║██║█████╗  ███████╗               ║
-║   ██║   ██║██╔═══╝    ██║   ██║██║╚██╔╝██║██║██╔══╝  ╚════██║               ║
-║   ╚██████╔╝██║        ██║   ██║██║ ╚═╝ ██║██║███████╗███████║               ║
-║    ╚═════╝ ╚═╝         ╚═╝   ╚═╝╚═╝     ╚═╝╚═╝╚══════╝╚══════╝               ║
-║                                                                              ║
-║        ██████╗ ███████╗███████╗██╗   ██╗███╗   ███╗███████╗                 ║
-║        ██╔══██╗██╔════╝██╔════╝██║   ██║████╗ ████║██╔════╝                 ║
-║        ██████╔╝█████╗  █████╗  ██║   ██║██╔████╔██║█████╗                   ║
-║        ██╔══██╗██╔══╝  ██╔══╝  ██║   ██║██║╚██╔╝██║██╔══╝                   ║
-║        ██║  ██║███████╗██║     ╚██████╔╝██║ ╚═╝ ██║███████╗                 ║
-║        ╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝ ╚═╝     ╚═╝╚══════╝                 ║
-║                                                                              ║
-║        ███████╗██████╗ ██╗████████╗██████╗  ██████╗ ██████╗                 ║
-║        ██╔════╝██╔══██╗██║╚══██╔══╝██╔══██╗██╔═══██╗██╔══██╗                ║
-║        █████╗  ██████╔╝██║   ██║   ██████╔╝██║   ██║██████╔╝                ║
-║        ██╔══╝  ██╔═══╝ ██║   ██║   ██╔══██╗██║   ██║██╔═══╝                 ║
-║        ██║     ██║     ██║   ██║   ██╔══██╗╚██████╔╝██║                     ║
-║        ╚═╝     ╚═╝     ╚═╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝                     ║
-║                                                                              ║
-║   🚀 ATS Score → 💯 | 🎯 JD Keyword Coverage → 100% | 📨 Telegram → Cha-ching ║
-║   "If at first you don't score 95, loop, loop again." — Every dev ever        ║
-║                                                                              ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-```
+<p align="center">
+  <img src="assets/overview-banner.svg" alt="ATS Torture Chamber — Overview Banner" width="800" />
+</p>
+
+<p align="center">
+  <em>ATS Score → 💯 · JD Keyword Coverage → 100% · Telegram → Cha-ching</em><br>
+  <em>"If at first you don't score 95, loop, loop again." — Every dev ever</em>
+</p>
 
 > **WARNING:** This README contains sarcasm. If you are a robot with no sense of
-> humour, skip straight to [§5 — Requirements](#5-requirements-or-what-you-actually-need).
+> humour, skip straight to [§5 — Requirements](#5-requirements-or-what-you-actually-need-).
 > If you are a human, strap in. 🍿
 
 ---
 
 ## 📑 Table of Contents
 
-1. [What In The Name Of Hiring Is This?](#1-what-in-the-name-of-hiring-is-this)
-2. [Why Does This Exist? (A Tragic Backstory)](#2-why-does-this-exist-a-tragic-backstory)
-3. [The Big Picture (Architecture, Minus The Buzzwords)](#3-the-big-picture-architecture-minus-the-buzzwords)
-4. [The ATS Death Loop (How The Magic Happens)](#4-the-ats-death-loop-how-the-magic-happens)
-5. [Requirements (Or What You Actually Need)](#5-requirements-or-what-you-actually-need)
-6. [Installation (Import This Sucker)](#6-installation-import-this-sucker)
-7. [Configuration (Turn The Knobs, Break Things)](#7-configuration-turn-the-knobs-break-things)
-   - 7.4 [Secrets, Scrubbery & Placeholders](#74-secrets-scrubbery--placeholders-read-this-or-get-pwned)
-8. [How To Use (Triggering The Beast)](#8-how-to-use-triggering-the-beast)
-9. [Node-By-Node Tour (The Fleshy Bits)](#9-node-by-node-tour-the-fleshy-bits)
-10. [File Naming Conventions (Yes, This Gets Its Own Section)](#10-file-naming-conventions-yes-this-gets-its-own-section)
-11. [The LaTeX Compile Pipeline (Where PDFs Are Born)](#11-the-latex-compile-pipeline-where-pdfs-are-born)
-12. [Logs & Debugging (Crying With Evidence)](#12-logs--debugging-crying-with-evidence)
-13. [Known Issues & Pain Points (Spoiler: There Are Many)](#13-known-issues--pain-points-spoiler-there-are-many)
-14. [Troubleshooting Cheat Sheet (When The Loop Loops Forever)](#14-troubleshooting-cheat-sheet-when-the-loop-loops-forever)
-15. [Working On This Workflow (Live REST Editing 101)](#15-working-on-this-workflow-live-rest-editing-101)
-16. [API Reference (The Boring But Useful Bits)](#16-api-reference-the-boring-but-useful-bits)
-17. [Execution Log (A Hall Of Shame And Triumph)](#17-execution-log-a-hall-of-shame-and-triumph)
-18. [Roadmap (Things We Keep Meaning To Do)](#18-roadmap-things-we-keep-meaning-to-do)
-19. [FAQ (Frequently Agonized Questions)](#19-faq-frequently-agonized-questions)
-20. [License & Disclaimers (Lawyer-Approved Cynicism)](#20-license--disclaimers-lawyer-approved-cynicism)
-21. [Changelog (The Scar Tissue)](#21-changelog-the-scar-tissue)
+1. [What In The Name Of Hiring Is This?](#1-what-in-the-name-of-hiring-is-this-)
+2. [Why Does This Exist? (A Tragic Backstory)](#2-why-does-this-exist-a-tragic-backstory-)
+3. [The Big Picture (Architecture, Minus The Buzzwords)](#3-the-big-picture-architecture-minus-the-buzzwords-️)
+4. [The ATS Death Loop (How The Magic Happens)](#4-the-ats-death-loop-how-the-magic-happens-)
+5. [Requirements (Or What You Actually Need)](#5-requirements-or-what-you-actually-need-)
+6. [Installation (Import This Sucker)](#6-installation-import-this-sucker-)
+7. [Configuration (Turn The Knobs, Break Things)](#7-configuration-turn-the-knobs-break-things-️)
+   - 7.4 [Secrets, Scrubbery & Placeholders](#74-️-secrets-scrubbery--placeholders-read-this-or-get-pwned)
+8. [How To Use (Triggering The Beast)](#8-how-to-use-triggering-the-beast-)
+9. [Node-By-Node Tour (The Fleshy Bits)](#9-node-by-node-tour-the-fleshy-bits-)
+10. [File Naming Conventions (Yes, This Gets Its Own Section)](#10-file-naming-conventions-yes-this-gets-its-own-section-️)
+11. [The LaTeX Compile Pipeline (Where PDFs Are Born)](#11-the-latex-compile-pipeline-where-pdfs-are-born-️)
+12. [Logs & Debugging (Crying With Evidence)](#12-logs--debugging-crying-with-evidence-️)
+13. [Known Issues & Pain Points (Spoiler: There Are Many)](#13-known-issues--pain-points-spoiler-there-are-many-)
+14. [Troubleshooting Cheat Sheet (When The Loop Loops Forever)](#14-troubleshooting-cheat-sheet-when-the-loop-loops-forever-)
+15. [Working On This Workflow (Live REST Editing 101)](#15-working-on-this-workflow-live-rest-editing-101-️)
+16. [API Reference (The Boring But Useful Bits)](#16-api-reference-the-boring-but-useful-bits-)
+17. [Execution Log (A Hall Of Shame And Triumph)](#17-execution-log-a-hall-of-shame-and-triumph-️)
+18. [Roadmap (Things We Keep Meaning To Do)](#18-roadmap-things-we-keep-meaning-to-do-️)
+19. [FAQ (Frequently Agonized Questions)](#19-faq-frequently-agonized-questions-)
+20. [License & Disclaimers (Lawyer-Approved Cynicism)](#20-license--disclaimers-lawyer-approved-cynicism-️)
+21. [Changelog (The Scar Tissue)](#21-changelog-the-scar-tissue-)
 22. [Author](#-author)
 
 ---
